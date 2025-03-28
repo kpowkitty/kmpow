@@ -267,7 +267,7 @@ Now, bring your desired git repo down into `/usr/src` to make the tests.
 
 ### Kyua Testing
 
-Now with that setup, you can navigate to the test suite in FreeBSD’s src that you would like to run Kyua tests.   
+Now with that setup, you can navigate to the test suite in FreeBSD’s source tree that you would like to run Kyua tests.   
 
 ```bash
 # cd path/to/the/tests
