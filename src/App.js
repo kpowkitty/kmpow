@@ -49,7 +49,8 @@ function Layout() {
             variant="h2" 
             component="div" 
             sx={{ 
-              flexGrow: 1, 
+              flexGrow: 1,
+              color: '#fbf1c7',
               fontFamily: 'Source Sans 3' 
             }}
           >

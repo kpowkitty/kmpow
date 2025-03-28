@@ -1,6 +1,5 @@
 # Storybook: A Two Part Tale
-
-## By Kat Powell, @kpowkitty
+#### By Kat Powell, @kpowkitty
 
 ---
 
@@ -41,37 +40,47 @@ enabled. If you already have `node` installed, check these `USE` flags, because 
 particular, `corepack` does not come default enabled, and we need it to bring in 
 recent `yarn` versions since Gentoo’s latest `yarn` is 1.2.2 (very deprecated).
 
-`sudo emerge \--ask nodejs`
-
+```bash
+sudo emerge --ask nodejs
+```
 To check/change your use flags:
 
-`sudo nvim /etc/portage/package.use`
+```bash
+sudo nvim /etc/portage/package.use
+```
 
 Make sure nodejs looks like this: 
 
-`net-libs/nodejs npm inspector corepack`
+```bash
+net-libs/nodejs npm inspector corepack
+```
 
 Next, we need to install `fnm`. 
 
-`sudo emerge \--ask dev-util/fnm`
+```bash
+sudo emerge \--ask dev-util/fnm
+```
 
 Then, either in your local project environment or `.zshrc`, add:
 
+```bash
+FNM_PATH="/home/bee/.local/share/fnm"  
 
-`FNM_PATH="/home/bee/.local/share/fnm"`  
+if \[ \-d "$FNM\_PATH" \]; then 
 
-`if \[ \-d "$FNM\_PATH" \]; then`  
+  export PATH="/home/bee/.local/share/fnm:$PATH"  
 
-  `export PATH="/home/bee/.local/share/fnm:$PATH"`  
+  eval "'fnm env'"  
 
-  `eval "'fnm env'"`  
-
-`fi`  
+fi
+```
 
 And then source the file you added it to so your current terminal is up to date 
 with this change (or restart your terminal).
 
-`source ~/path/to/your/file`
+```bash
+source ~/path/to/your/file
+```
 
 ### **Building the project**
 
@@ -79,21 +88,35 @@ Navigate to the root of your local storybook project.
 
 Run these commands:
 
-`corepack enable`
+```bash
+corepack enable
+```
 
-`corepack use yarn@stable`
+```bash
+corepack use yarn@stable
+```
 
-`yarn install`
+```bash
+yarn install
+```
 
-`yarn start`
+```bash
+yarn start
+```
 
 Note: I had an issue with Playwright here. 
 
-`kill -9 <pid of yarn start cmd>`
+```bash
+kill -9 $YARN_START_PID
+```
 
-`yarn install playwright`
+```bash
+yarn install playwright
+```
 
-`yarn start`
+```bash
+yarn start
+```
 
 And it should run the demo storybook\!
 
@@ -105,38 +128,56 @@ And it should run the demo storybook\!
 
 First, install node:
 
-`brew install node`
+```bash
+brew install node
+```
 
 Next, install `fnm`:
 
-`brew install fnm`
+```bash
+brew install fnm
+```
 
 Then, either in your local project environment or `.zshrc`, add:
 
-`eval "$(fnm env --use-on-cd --corepack-enabled --version-file-strategy recursive)"`
+```bash
+eval "$(fnm env --use-on-cd --corepack-enabled --version-file-strategy recursive)"
+```
 
 And then source the file you added it to so your current terminal is up to date 
 with this change (or restart your terminal).
 
-`source ~/path/to/your/file`
+```bash
+source ~/path/to/your/file
+```
 
 Next, we’re going to use `corepack` to manage our `yarn` environment. 
 Since projects vary on what `yarn` version they can use, `corepack` allows you to 
 pull in a specific `yarn` local to the current project you are building.
 
-`brew install corepack`
+```bash
+brew install corepack
+```
 
 ### **Building the project**
 
 Now, navigate to the project on your local machine, and run:
 
-`corepack enable`
+```bash
+corepack enable
+```
 
-`corepack use yarn@stable`
+```bash
+corepack use yarn@stable
+```
 
-`yarn install`
+```bash
+yarn install
+```
 
-`yarn start`
+```bash
+yarn start
+```
 
 And it should run the demo storybook\!
 
@@ -165,17 +206,27 @@ and some mighty google-foo to figure out what’s wrong.
 
 My immediate thought was to reset `yarn` and `node`. I did so by:
 
-`yarn cache clean`
+```bash
+yarn cache clean
+```
 
-`npm cache clean - -force`
+```bash
+npm cache clean - -force
+```
 
-`rm yarn.lock`
+```bash
+rm yarn.lock
+```
 
-`rm -r node_modules`
+```bash
+rm -r node_modules
+```
 
 Now, I should be back to a normal state. So, let’s try rebuilding the app again:
 
-`yarn start`
+```bash
+yarn start
+```
 
 …And I get the same error. I tried clearing all my caches again, 
 updating specific packages, updating my computer, resetting to main, etc., 

@@ -22,7 +22,8 @@ export default function ActionAreaCard({ title, desc, image, blogLink }) {
         maxWidth: 345,
         height: 315,
         boxShadow: '0 4px 15px rgba(0, 0, 0, 0.8)', // Stronger shadow for contrast
-        borderRadius: '12px', // Softer corners for a smoother look
+        //border: '1px solid #fbf1c7',
+        borderRadius: '12px',
         '&:hover': {
           transform: 'scale(1.03)', // Slight zoom for engagement
           transition: 'all 0.3s ease-in-out',
@@ -59,6 +60,7 @@ export default function ActionAreaCard({ title, desc, image, blogLink }) {
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
               width: '100%',
+              borderBottom: '1px solid #111111',
             }}
           >
             {title} 
@@ -67,6 +69,7 @@ export default function ActionAreaCard({ title, desc, image, blogLink }) {
             variant="body2" 
             sx={{ 
               fontFamily: '"Source Sans 3", sans-serif',
+              color: '#111111',
             }}
           >
             {desc}
@@ -83,12 +86,12 @@ export default function ActionAreaCard({ title, desc, image, blogLink }) {
                 color: '#0e140c',
                 '&:hover': {
                   backgroundColor: 'rgba(0, 0, 0, 0.0)',
-                  color: '#040503',
+                  color: '#fbf1c7',
                 },
               }}
               onClick={handleShareClick}
             >
-              Share
+              Copy Link
           </Button>
         </CardActions>
       </Link>

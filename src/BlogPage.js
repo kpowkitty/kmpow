@@ -4,6 +4,73 @@ import ReactMarkdown from 'react-markdown';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { gruvboxLight, nord, hopscotch, lucario, shadesOfPurple, solarizedDarkAtom, synthwave84 } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import rehypeRaw from 'rehype-raw';
+import remarkGfm from 'remark-gfm';
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+</style>
+
+const CodeBlock = ({ node, inline, className, children, ...props }) => {
+  const [copied, setCopied] = useState(false);
+  const match = /language-(\w+)/.exec(className || '');
+  
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(String(children).replace(/\n$/, ''));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return !inline && match ? (
+    <div style={{ position: 'relative' }}>
+      <SyntaxHighlighter
+        style={gruvboxLight}
+        language={match[1]}
+        PreTag="div"
+        customStyle={{
+          borderRadius: '8px',
+          fontFamily: 'monospace',
+        }}
+        codeTagProps={{
+          style: {
+            fontSize: '15px',
+            fontFamily: 'monospace',
+          }
+        }}
+        {...props}
+      >
+        {String(children).replace(/\n$/, '')}
+      </SyntaxHighlighter>
+      <button
+        onClick={handleCopy}
+        style={{
+          position: 'absolute',
+          top: '8px',
+          right: '8px',
+          background: '#f7e6c8',
+          color: '#b09971',
+          border: 'none',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+      >
+        {copied ? 'Copied!' : 'Copy'}
+      </button>
+    </div>
+  ) : (
+    <code 
+      className={className} 
+      style={{
+          fontFamily: 'monospace',
+      }}
+      {...props}
+    >
+      {children}
+    </code>
+  );
+};
 
 export default function BlogPage() {
   const { slug } = useParams();
@@ -31,7 +98,7 @@ export default function BlogPage() {
 
   return (
     <div className="blog-content">
-    <Container maxWidth="sm" disableGutters
+    <Container maxWidth="sm"
       sx={{
         '& pre': {
           wordWrap: 'break-word',
@@ -43,10 +110,21 @@ export default function BlogPage() {
     >
       <ReactMarkdown  
         components={{
+          code: CodeBlock,
           p: ({node, ...props}) => (
             <p
               style={{
-                color: '#000000',
+                color: '#fbf1c7',
+              }}
+              {...props}
+            />
+          ),
+          h1: ({node, ...props}) => (
+            <h1
+              style={{
+                textAlign: 'center',
+                border: 'none',
+                color: '#fbf1c7',
               }}
               {...props}
             />
@@ -55,7 +133,8 @@ export default function BlogPage() {
             <h2
               style={{
                 border: 'none',
-                color: '#000000',
+                color: '#f5d59f',
+                textAlign: 'center',
               }}
               {...props}
             />
@@ -63,8 +142,17 @@ export default function BlogPage() {
           h3: ({node, ...props}) => (
             <h3
               style={{
-                color: '#000000',
+                color: '#f5d59f',
                 borderBottom: '2px solid #304529',
+              }}
+              {...props}
+            />
+          ),
+          h4: ({node, ...props}) => (
+            <h4
+              style={{
+                textAlign: 'center',
+                color: '#f5d59f',
               }}
               {...props}
             />
@@ -76,7 +164,7 @@ export default function BlogPage() {
                 marginLeft: '-16px',
                 marginRight: '-16px',
                 border: 'none',
-                borderTop: '1px solid #e0e0e0', // Adjust color as needed
+                borderTop: '1px solid #fbf1c7', // Adjust color as needed
               }} 
               {...props} 
             />
