@@ -56,13 +56,20 @@ body {
 }
 
 .blog-content {
-  max-width: 600px;
+  width: 80%;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   display: flex;
   margin: 0 auto;
   align-items: center;
   line-height: 1.6;
   background-color: #44633d;
+}
+
+.blog-content pre {
+	width: 100%;
+	max-width: 90%;
+	overflow-x: auto;
+	margin: 20px auto;
 }
 
 .blog-content h2 {

@@ -98,7 +98,7 @@ export default function BlogPage() {
 
   return (
     <div className="blog-content">
-    <Container maxWidth="sm"
+    <Container disableGutters
       sx={{
         '& pre': {
           wordWrap: 'break-word',
@@ -106,9 +106,21 @@ export default function BlogPage() {
           whiteSpace: 'normal',
         },
         paddingTop: '125px',
+        width: '80%',
+        margin: '0 auto',
       }}
     >
-      <ReactMarkdown  
+      <ReactMarkdown 
+        sx={{
+          '& pre': {
+            wordWrap: 'break-word',
+            overflowWrap: 'break-word',
+            whiteSpace: 'normal',
+          },
+          paddingTop: '125px',
+          width: '80%',
+          margin: '0 auto',
+        }}
         components={{
           code: CodeBlock,
           p: ({node, ...props}) => (

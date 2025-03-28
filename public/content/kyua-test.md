@@ -69,16 +69,82 @@ Now that we have the template, we will:
 ```bash
 cp -r /usr/local/jails/templates/$RELEASE /usr/local/jails/containers/$NAME_OF_JAIL`
 ```
+### Configuring the Jail for Kyua
 
-Now, we are ready to start the jail.
+To set jail specific configurations, we modify `/etc/jail.conf`.
 
 ```bash
-# service jails start $NAME_OF_JAIL
+# cd /etc/
 ```
+
+```bash
+# vi jail.conf
+```
+Here is my jail.conf, where I have general specifications on top,
+and then specify for each jail after (our focus is on the `kyua` section, I left
+my other section in for example):
+
+```bash
+# /etc/jail.conf
+host.hostname = $name;
+$jail_path = "/usr/local/jails/containers";
+path = "$jail_path/$name";
+
+exec.clean;
+mount.devfs;
+
+exec.start = "sh /etc/rc";
+exec.stop = "sh /etc/rc.shutdown";
+exec.prestart = "cp /etc/resolv.conf $path/etc";
+exec.poststop = "rm $path/etc/resolv.conf";
+
+webserv {
+        devfs_ruleset="10";
+        path = "${jail_path}/${name}";
+
+        vnet;
+        vnet.interface = "epair0a";
+
+        allow.chflags;
+        mount.fstab = "${jail_path}/${name}.fstab";
+}
+
+kyua {
+        path = "${jail_path}/${name}";
+
+        allow.chflags;
+        mount.fstab = "${jail_path}/${name}.fstab";
+
+}
+```
+
+We are mounting fstab with our host's pkg repo, so we can simply fetch packages
+on the host and send them to the jail. In order to do this, we need to
+mount the required directories:
+
+```bash
+# vi /usr/local/jails/containers/$JAIL_NAME.fstab
+```
+
+```bash
+# /usr/local/jails/containers/$JAIL_NAME.fstab
+/usr/ports /usr/local/jails/containers/web-db/usr/ports nullfs ro 0 0
+/var/cache/pkg /usr/local/jails/containers/web-db/var/cache/pkg nullfs ro 0 0
+```
+Make sure you create the subsequent directories, or else it will fail:
+
+```bash
+# mkdir -p /usr/local/jails/containers/$JAIL_NAME/usr/ports
+```
+```bash
+# mkdir -p /usr/local/jails/containers/$JAIL_NAME/var/cache/pkg
+```
+
+Now our jail is configured!
 
 ### Before We Enter the Jail  
 
-Since we are going to be using Git to pull in the src tree for testing, we need
+Since we are going to be using Git to pull in the source tree for testing, we need
 to install Git in our jail. In the host, we will run these commands:
 
 ```bash
@@ -93,7 +159,11 @@ it brings in.
 # pkg -j $JAIL_NAME add /var/cache/pkg/$GIT.pkg
 ```
 
-With that, we are now ready to enter the jail.
+With that, we are now ready to start and enter the jail.
+
+```bash
+# service jails start $NAME_OF_JAIL
+```
 
 ```bash
 # jexec $NAME_OF_JAIL
@@ -111,22 +181,42 @@ This information is found under *GitHub Docs*, “[Connecting to GitHub with SSH
 # vi /etc/rc.conf 
 ```
 ```bash
-# Enable sshd for Git
+# /etc/rc.conf
 sshd_enable= “YES”
 ```
+
+Now, to add `ssh`, we need to create a user for our jail. 
 ```bash
-# cd ~/.ssh
+# adduser
 ```
+
+Follow the prompts: invite to wheel group, standard options. 
+From here on out, `$USER` refers to the name you just gave your jail user.
+
+```bash
+# cd /home/$USER
+```
+
+```bash
+# mkdir .ssh
+```
+
+```bash
+# cd .ssh
+```
+
 ```bash
 # vi config
 ```
+
 ```sh
-# Github Authentication
+# /home/$USER/.ssh
 Host github.com  
     HostName github.com   
     User git  
-    IdentityFile ~/.ssh/"$YOUR_IDENTITY_FILE”
+    IdentityFile /home/$USER/.ssh/"$YOUR_IDENTITY_FILE”
 ```
+
 ```bash
 # ssh-keygen -t ed25519 -C "$GITHUB_EMAIL"
 ```
@@ -136,15 +226,19 @@ We need to give our identity file to the ssh agent. First, confirm it is on, and
 ```bash
 # eval "$(ssh-agent -s)"
 ```
+
 ```bash
-# ssh-add ~/.ssh/$YOUR_IDENTITY_FILE
+# ssh-add /home/$USER/.ssh/$YOUR_IDENTITY_FILE
 ```
+
 ```bash
 # git config user.name “$GITHUB_USER”
 ```
+
 ```bash
 # git config user.email “$GITHUB_EMAIL”
 ```
+
 ```bash
 # cat $YOUR_IDENTITY_FILE.pub
 ```
@@ -157,14 +251,17 @@ Open Github, navigate to your settings, and click SSH/GPG Keys on the left hand 
 
 You should receive a success message with that command. If you do not, you messed up throughout this process and need to redo this section.  
 Now, bring your desired git repo down into `/usr/src` to make the tests.
+
 ```bash
 # mkdir -p /usr/src/ 
 ```
+
 ```bash
-# cd /usr/src`  
+# cd /usr/src
 ```
+
 ```bash
-# git clone $FREEBSD_SRC_SSH_LINK`
+# git clone $FREEBSD_SRC_SSH_LINK
 ```
 ---
 
