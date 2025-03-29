@@ -67,7 +67,7 @@ And the rest is exactly like Genneko’s template set-up. I will omit pointless 
 Now that we have the template, we will:
 
 ```bash
-cp -r /usr/local/jails/templates/$RELEASE /usr/local/jails/containers/$NAME_OF_JAIL`
+# cp -r /usr/local/jails/templates/$RELEASE /usr/local/jails/containers/$NAME_OF_JAIL`
 ```
 ### Configuring the Jail for Kyua
 

@@ -105,8 +105,9 @@ export default function BlogPage() {
           overflowWrap: 'break-word',
           whiteSpace: 'normal',
         },
-        paddingTop: '125px',
-        width: '80%',
+        paddingTop: '70px',
+        paddingBottom: '40px',
+        width: '90%',
         margin: '0 auto',
       }}
     >

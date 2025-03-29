@@ -42,6 +42,7 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
   position: fixed;
   z-index: 1000;
+  max-height: 70px !important;
 }
 
 .app-layout footer {
@@ -51,12 +52,12 @@ body {
   padding-top: 20px;
   padding-bottom: 20px;
   margin-top: auto;
-  border-top: 2px solid #1A2617;
+  border-top: 2px solid #fbf1c7;
   box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .blog-content {
-  width: 80%;
+  width: 90%;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   display: flex;
   margin: 0 auto;

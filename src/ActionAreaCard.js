@@ -33,7 +33,7 @@ export default function ActionAreaCard({ title, desc, image, blogLink }) {
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
-        marginTop: '130px',
+        marginTop: '100px',
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

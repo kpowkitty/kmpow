@@ -3,7 +3,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter as Router, Route, Routes, Outlet, useNavigate } from 'react-router-dom';
 import ActionAreaCard from './ActionAreaCard';
 import BlogPage from './BlogPage';
-import { AppBar, Toolbar, IconButton, Typography, SvgIcon } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Typography, SvgIcon, Box } from '@mui/material';
 import './App.css';
 
 // Home Icon Component
@@ -12,6 +12,46 @@ function HomeIcon(props) {
     <SvgIcon {...props}>
       <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
     </SvgIcon>
+  );
+}
+
+function Footer() {
+  return (
+    <Box
+      component="footer"
+      sx={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "10px 20px",
+        backgroundColor: "white",
+        boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)",
+        zIndex: 1000,
+        height: "20px",
+      }}
+    >
+      <Box>
+        <img
+          src="/FREEBSD_Logo_Horiz_Pos_RGB.png"
+          alt="FreeBSD Logo"
+          style={{ height: 30 }}
+        />
+      </Box>
+      <Typography
+        variant="body2"
+        sx={{
+          position: "absolute",
+          left: "50%",
+          transform: "translateX(-50%)",
+        }}
+      >
+        © 2025 kmpow ᓚᘏᗢ
+      </Typography>
+    </Box>
   );
 }
 
@@ -30,9 +70,9 @@ function Layout() {
         color="transparent" 
         elevation={0}
         sx={{ 
-          width: '100%',  // Ensure full width
-          margin: 0,      // Remove any margins
-          padding: 0,     // Remove any padding
+          width: '100%',
+          margin: 0,
+          padding: 0,
         }}
       >
         <Toolbar>
@@ -41,29 +81,40 @@ function Layout() {
             color="inherit" 
             aria-label="home"
             onClick={handleHomeClick}
-            sx={{ mr: 2 }}
+            sx={{ 
+              mr: 2,
+            }}
           >
-            <HomeIcon />
+            <HomeIcon 
+              sx={{
+                textAlign: 'center',
+                margin: '0 auto',
+                paddingBottom: '35px',
+              }}
+            />
           </IconButton>
           <Typography 
             variant="h2" 
             component="div" 
-            sx={{ 
-              flexGrow: 1,
+            sx={{
               color: '#fbf1c7',
-              fontFamily: 'Source Sans 3' 
+              fontFamily: 'Source Sans 3',
+              margin: '0 auto',
+              fontSize: '20px',
+              width: 'fit-content',
+              paddingRight: '24px',
+              paddingBottom: '35px',
             }}
           >
-            kat's blog
+            <h1>kat's blog</h1>
           </Typography>
         </Toolbar>
       </AppBar>
       
-      {/* Outlet will render child routes */}
       <Outlet />
       
       <footer>
-        <p>© 2025 kmpow ᓚᘏᗢ</p>
+        <Footer />
       </footer>
     </div>
   );
