@@ -28,23 +28,18 @@ const ContactPage = () => {
     event.preventDefault();
     setFormStatus('submitting');
    
-    const formData = {
-    	name: event.target.name.value,
-	email: event.target.email.value,
-	message: event.target.message.value,
-    };
+    const formData = new FormData();
+    formData.append('name', event.target.name.value);
+    formData.append('email', event.target.email.value);
+    formData.append('message', event.target.message.value);
 
-    const csrfToken = getCSRFToken(); // Get CSRF token
+    //const csrfToken = getCSRFToken(); // Get CSRF token
 
     try {
       // Send the form data to Django backend via a POST request
       const response = await fetch('https://kmpow.com/send_message/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-	  'X-CSRFToken': csrfToken,
-        },
-        body: JSON.stringify(formData),
+        body: formData,
       });
 
       const data = await response.json();
@@ -206,6 +201,8 @@ const ContactPage = () => {
               label="Name"
               margin="normal"
               required
+              type="name"
+              name="name"
               variant="outlined"
               sx={{
                 mb: 2,
@@ -225,6 +222,7 @@ const ContactPage = () => {
               margin="normal"
               required
               type="email"
+              name="email"
               variant="outlined"
               sx={{
                 mb: 2,
@@ -242,6 +240,8 @@ const ContactPage = () => {
               fullWidth
               label="Message"
               margin="normal"
+              type="message"
+              name="message"
               required
               multiline
               rows={4}
@@ -283,7 +283,7 @@ const ContactPage = () => {
       </Container>
 
       {/* CSS for twinkling animation */}
-      <style jsx>{`
+      <style>{`
         @keyframes twinkle {
           0% { opacity: 0.2; }
           50% { opacity: 1; }

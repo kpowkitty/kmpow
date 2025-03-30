@@ -132,7 +132,7 @@ function StarFieldContent() {
                 filter: star.isActive ? "drop-shadow(0 0 5px #43fc1e)" : "none", // Add glow effect for active stars
                 "&:hover": star.isActive ? {
                   transform: "scale(1.2)",
-                  filter: "drop-shadow(0 0 8px #9b3dff)", // Enhanced glow on hover
+                  filter: "drop-shadow(0 0 8px #43fc1e)", // Enhanced glow on hover
                 } : {},
               }}
               onClick={() => {

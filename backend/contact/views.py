@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.conf import settings
 from django.http import JsonResponse
+from django_ratelimit.decorators import ratelimit
 from django.views.decorators.csrf import csrf_exempt
 from .forms import ContactForm  # Assume you have a ContactForm
 import environ
