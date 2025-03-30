@@ -6,36 +6,57 @@ import EmailIcon from '@mui/icons-material/Email';
 import SendIcon from '@mui/icons-material/Send';
 import FadeAppBar from './FadeAppBar';
 
+// Fetch CSRF Token from meta tag
+const getCSRFToken = () => {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+};
+
 const ContactPage = () => {
   const [formStatus, setFormStatus] = useState('idle'); // 'idle', 'submitting', 'success', 'error'
      
-  // Add this effect to reset the form status after 10 seconds
   useEffect(() => {
     if (formStatus === 'success' || formStatus === 'error') {
       const timer = setTimeout(() => {
         setFormStatus('idle');
       }, 10000); // 10 seconds
       
-      // Clean up the timer if the component unmounts
       return () => clearTimeout(timer);
     }
   }, [formStatus]); 
   
-  const HandleSubmit = (event) => {
+  const HandleSubmit = async (event) => {
     event.preventDefault();
     setFormStatus('submitting');
    
-    // Mock API call or form submission
-    setTimeout(() => {
-      try {
-        // Here you would normally send the form data to your backend
-        console.log('Form submitted');
+    const formData = {
+    	name: event.target.name.value,
+	email: event.target.email.value,
+	message: event.target.message.value,
+    };
+
+    const csrfToken = getCSRFToken(); // Get CSRF token
+
+    try {
+      // Send the form data to Django backend via a POST request
+      const response = await fetch('https://kmpow.com/send_message/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+	  'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
         setFormStatus('success');
-      } catch (error) {
-        console.error('Submission error:', error);
+      } else {
         setFormStatus('error');
       }
-    }, 1500); // Simulate network delay
+    } catch (error) {
+      console.error('Error:', error);
+      setFormStatus('error');
+    }
   };
 
   return (
@@ -151,22 +172,6 @@ const ContactPage = () => {
               }}
             >
               <LinkedInIcon fontSize="large" />
-            </IconButton>
-            
-            <IconButton 
-              aria-label="email" 
-              size="large"
-              href="mailto:witchikittikat@gmail.com"
-              sx={{ 
-                color: 'white',
-                '&:hover': { 
-                  color: '#9b3dff',
-                  transform: 'scale(1.1)',
-                },
-                transition: 'all 0.3s ease',
-              }}
-            >
-              <EmailIcon fontSize="large" />
             </IconButton>
           </Box>
           

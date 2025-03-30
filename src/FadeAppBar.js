@@ -67,7 +67,7 @@ const FadeAppBar = ({ position = "top" }) => {
           {position === "top" ? (
             <>
               <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: "#9b3dff" }}>
-                kat's blogs
+                kat's blog
               </Typography>
               <Box>
                 <IconButton 

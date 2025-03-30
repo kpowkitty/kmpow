@@ -128,8 +128,8 @@ function StarFieldContent() {
             <StarOutlinedIcon
               sx={{
                 fontSize: star.isActive ? 20 : star.size,
-                color: star.isActive ? "#9b3dff" : "#2cfc03",
-                filter: star.isActive ? "drop-shadow(0 0 5px #9b3dff)" : "none", // Add glow effect for active stars
+                color: star.isActive ? "#43fc1e" : "#25d602",
+                filter: star.isActive ? "drop-shadow(0 0 5px #43fc1e)" : "none", // Add glow effect for active stars
                 "&:hover": star.isActive ? {
                   transform: "scale(1.2)",
                   filter: "drop-shadow(0 0 8px #9b3dff)", // Enhanced glow on hover
