@@ -58,7 +58,7 @@ net-libs/nodejs npm inspector corepack
 Next, we need to install `fnm`. 
 
 ```bash
-sudo emerge \--ask dev-util/fnm
+sudo emerge --ask dev-util/fnm
 ```
 
 Then, either in your local project environment or `.zshrc`, add:
@@ -66,7 +66,7 @@ Then, either in your local project environment or `.zshrc`, add:
 ```bash
 FNM_PATH="/home/bee/.local/share/fnm"  
 
-if \[ \-d "$FNM\_PATH" \]; then 
+if [ -d "$FNM\_PATH" ]; then 
 
   export PATH="/home/bee/.local/share/fnm:$PATH"  
 

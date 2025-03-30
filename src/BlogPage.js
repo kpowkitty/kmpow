@@ -5,12 +5,28 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { gruvboxLight, nord, hopscotch, lucario, shadesOfPurple, solarizedDarkAtom, synthwave84 } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
-</style>
+import './BlogPage.css';
+
+// Define custom style for variables
+const customStyle = {
+  ...oneDark,
+  'variable': {
+    color: '#EBEA00', // Custom color for variables (e.g., bash variable)
+  },
+  'operator': {
+    color: '#EBEA00', // Custom color for keywords
+  },
+  'string': {
+    color: '#FF7700',
+  },
+  'comment': {
+    color: '#EDE6ED',
+  }
+  // Add more customizations here if necessary
+};
 
 const CodeBlock = ({ node, inline, className, children, ...props }) => {
   const [copied, setCopied] = useState(false);
@@ -25,12 +41,13 @@ const CodeBlock = ({ node, inline, className, children, ...props }) => {
   return !inline && match ? (
     <div style={{ position: 'relative' }}>
       <SyntaxHighlighter
-        style={gruvboxLight}
+        style={customStyle}
         language={match[1]}
         PreTag="div"
         customStyle={{
-          borderRadius: '8px',
           fontFamily: 'monospace',
+          color: '#FF00EE',
+          backgroundColor: '#1b1c1f',
         }}
         codeTagProps={{
           style: {
@@ -48,8 +65,8 @@ const CodeBlock = ({ node, inline, className, children, ...props }) => {
           position: 'absolute',
           top: '8px',
           right: '8px',
-          background: '#f7e6c8',
-          color: '#b09971',
+          background: '#333842',
+          color: '#FFFFFF',
           border: 'none',
           padding: '4px 8px',
           borderRadius: '4px',
@@ -78,6 +95,7 @@ export default function BlogPage() {
   const [title, setTitle] = useState('');
 
   useEffect(() => {
+    // Fixed the fetch path by adding quotes
     fetch(`/content/${slug}.md`)
       .then((response) => {
         if (!response.ok) throw new Error('Content not found');
@@ -98,95 +116,95 @@ export default function BlogPage() {
 
   return (
     <div className="blog-content">
-    <Container disableGutters
-      sx={{
-        '& pre': {
-          wordWrap: 'break-word',
-          overflowWrap: 'break-word',
-          whiteSpace: 'normal',
-        },
-        paddingTop: '70px',
-        paddingBottom: '40px',
-        width: '90%',
-        margin: '0 auto',
-      }}
-    >
-      <ReactMarkdown 
+      <Container className="blog-container"
+        disableGutters
+        maxWidth={false}
         sx={{
           '& pre': {
             wordWrap: 'break-word',
             overflowWrap: 'break-word',
             whiteSpace: 'normal',
           },
-          paddingTop: '125px',
-          width: '80%',
+          paddingTop: '10px',
           margin: '0 auto',
         }}
-        components={{
-          code: CodeBlock,
-          p: ({node, ...props}) => (
-            <p
-              style={{
-                color: '#fbf1c7',
-              }}
-              {...props}
-            />
-          ),
-          h1: ({node, ...props}) => (
-            <h1
-              style={{
-                textAlign: 'center',
-                border: 'none',
-                color: '#fbf1c7',
-              }}
-              {...props}
-            />
-          ),
-          h2: ({node, ...props}) => (
-            <h2
-              style={{
-                border: 'none',
-                color: '#f5d59f',
-                textAlign: 'center',
-              }}
-              {...props}
-            />
-          ),
-          h3: ({node, ...props}) => (
-            <h3
-              style={{
-                color: '#f5d59f',
-                borderBottom: '2px solid #304529',
-              }}
-              {...props}
-            />
-          ),
-          h4: ({node, ...props}) => (
-            <h4
-              style={{
-                textAlign: 'center',
-                color: '#f5d59f',
-              }}
-              {...props}
-            />
-          ),
-          hr: ({node, ...props}) => (
-            <hr 
-              style={{
-                width: 'calc(100% + 32px)',
-                marginLeft: '-16px',
-                marginRight: '-16px',
-                border: 'none',
-                borderTop: '1px solid #fbf1c7', // Adjust color as needed
-              }} 
-              {...props} 
-            />
-          )
-        }}
       >
-        {content}
-      </ReactMarkdown>
-    </Container>
+        <ReactMarkdown 
+          rehypePlugins={[rehypeRaw]}
+          remarkPlugins={[remarkGfm]}
+          sx={{
+            '& pre': {
+              wordWrap: 'break-word',
+              overflowWrap: 'break-word',
+              whiteSpace: 'normal',
+            },
+            paddingTop: '125px',
+          }}
+          components={{
+            code: CodeBlock,
+            p: ({node, ...props}) => (
+              <p
+                style={{
+                  color: '#2DE600',
+                }}
+                {...props}
+              />
+            ),
+            h1: ({node, ...props}) => (
+              <h1
+                style={{
+                  textAlign: 'center',
+                  border: 'none',
+                  color: '#2DE600',
+                }}
+                {...props}
+              />
+            ),
+            h2: ({node, ...props}) => (
+              <h2
+                style={{
+                  border: 'none',
+                  color: '#2DE600',
+                  textAlign: 'center',
+                }}
+                {...props}
+              />
+            ),
+            h3: ({node, ...props}) => (
+              <h3
+                style={{
+                  color: '#2DE600',
+                  borderBottom: '2px solid #2DE600',
+                }}
+                {...props}
+              />
+            ),
+            h4: ({node, ...props}) => (
+              <h4
+                style={{
+                  textAlign: 'center',
+                  color: '#2DE600',
+                }}
+                {...props}
+              />
+            ),
+            hr: ({node, ...props}) => (
+              <hr 
+                style={{
+                  width: 'calc(100% + 32px)',
+                  marginLeft: '-16px',
+                  marginRight: '-16px',
+                  border: 'none',
+                  borderTop: '1px solid #2DE600', // Adjust color as needed
+                }} 
+                {...props} 
+              />
+            )
+          }}
+        >
+          {content}
+        </ReactMarkdown>
+      </Container>
     </div>
   );
 }

@@ -1,0 +1,24 @@
+[
+  {
+    "id": "star-1",
+    "category": "jails",
+    "title": "Kyua Testing in a FreeBSD UFS Jail",
+    "description": "A detailed guide on how to set up a FreeBSD UFS jail for running Kyua tests.",
+    "slug": "kyua-test",
+    "position": {
+      "x": 40,
+      "y": 63
+    }
+  },
+  {
+    "id": "star-2",
+    "category": "storybook",
+    "title": "Storybook: A Two Part Tale",
+    "description": "My adventures with Storybook under a micro-internship with CTI/Code Day.",
+    "slug": "storybook",
+    "position": {
+      "x": 39,
+      "y": 42
+    }
+  }
+]

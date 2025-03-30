@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600&display=swap');
+
+body {
+  background-color: #070708;
+}
+
+.card {
+  width: 345px;
+  max-height: 300px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  marginTop: 100px;
+  background-color: #070708 !important;
+  margin-top: 90px;
+}
+
+.card:hover {
+  transform: scale(1.03);
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+  filter: brightness(1.1);
+}
+
+.card:typography {
+  font-family: 'Source Sans 3';
+  margin-top: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  border-bottom: 1px solid #111111;
+}
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0 auto;
+  font-family: 'Source Sans 3';
+}
+
+.app-layout header,
+.app-layout footer {
+  width: 100vw;
+}
+
+.app-layout header {
+  background-color: #070708;
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  padding-top: 20px;
+  border-bottom: 2px solid #2DE600;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  position: fixed;
+  z-index: 1000;
+  max-height: 70px !important;
+}
+
+.app-layout footer {
+  background-color: #070708;
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: auto;
+  border-top: 2px solid #2DE600;
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.blog-wrapper {
+	color: #2DE600;
+}

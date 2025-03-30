@@ -14,7 +14,7 @@ For Kyua, you need to select tests when installing FreeBSD. If you have already 
 # vi /etc/src.conf
 ```
 ```bash
-/etc/src.conf
+# /etc/src.conf
 WITH_TESTS=yes
 ```
 ```bash
@@ -209,7 +209,7 @@ From here on out, `$USER` refers to the name you just gave your jail user.
 # vi config
 ```
 
-```sh
+```bash
 # /home/$USER/.ssh
 Host github.com  
     HostName github.com   

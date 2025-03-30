@@ -17,24 +17,7 @@ export default function ActionAreaCard({ title, desc, image, blogLink }) {
   };
 
   return (
-    <Card 
-      sx={{
-        maxWidth: 345,
-        height: 315,
-        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.8)', // Stronger shadow for contrast
-        //border: '1px solid #fbf1c7',
-        borderRadius: '12px',
-        '&:hover': {
-          transform: 'scale(1.03)', // Slight zoom for engagement
-          transition: 'all 0.3s ease-in-out',
-          boxShadow: '0 4px 15px rgba(0, 0, 0, 0.8)',
-          filter: 'brightness(1.1)',
-         },
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        marginTop: '100px',
-      }}
+    <Card class="card" 
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -50,26 +33,12 @@ export default function ActionAreaCard({ title, desc, image, blogLink }) {
             gutterBottom 
             variant="h5" 
             component="div"
-            sx={{ 
-              fontFamily: '"Source Sans 3", sans-serif',
-              marginTop: 1,
-              //display: '-webkit-box',
-              //WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              //WebkitLineClamp: 2,
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              width: '100%',
-              borderBottom: '1px solid #111111',
-            }}
           >
             {title} 
           </Typography>
           <Typography 
             variant="body2" 
             sx={{ 
-              fontFamily: '"Source Sans 3", sans-serif',
-              color: '#111111',
             }}
           >
             {desc}
