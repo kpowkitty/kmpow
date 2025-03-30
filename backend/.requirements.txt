@@ -1,4 +1,6 @@
+wheel
 psycopg2
 django
 django-cors-headers
 django_ratelimit
+gunicorn

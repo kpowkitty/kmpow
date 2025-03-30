@@ -27,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ 'kmpow.com', 'localhost', '127.0.0.1' ]
 
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'kmpow',
     'contact',
     'corsheaders',
 ]
@@ -145,13 +146,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 CORS_ALLOWED_ORIGINS = [
     "https://kmpow.com",
     "http://www.kmpow.com",
-    "http://localhost:3003/",
-]
-
-CORS_ALLOW_HEADERS = [
-   'X-CSRFToken',
-   'content-type',
-   # accept? XXX
+    "http://localhost:3003",
 ]
 
 CORS_ALLOW_METHODS = [

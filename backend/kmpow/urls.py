@@ -16,9 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from . import views
+from contact.views import send_contact_message
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('send_message/', views.send_contact_message, name='send_contact_message'),
+    path('send_message/', send_contact_message, name='send_contact_message'),
 ]

@@ -33,23 +33,37 @@ const ContactPage = () => {
     formData.append('email', event.target.email.value);
     formData.append('message', event.target.message.value);
 
-    //const csrfToken = getCSRFToken(); // Get CSRF token
+    const csrfToken = getCSRFToken(); // Get CSRF token
 
     try {
-      // Send the form data to Django backend via a POST request
       const response = await fetch('https://kmpow.com/send_message/', {
         method: 'POST',
+        credentials: 'include',
+        headers: {
+          'X-CSRFToken': csrfToken
+        },
         body: formData,
       });
-
-      const data = await response.json();
+    
+      const text = await response.text(); // Read as text first
+    
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (jsonError) {
+        console.error('Response is not valid JSON:', text);
+        setFormStatus('error');
+        return;
+      }
+    
       if (response.ok) {
         setFormStatus('success');
       } else {
+        console.error('Server error:', data);
         setFormStatus('error');
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Network error:', error);
       setFormStatus('error');
     }
   };
