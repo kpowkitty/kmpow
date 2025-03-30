@@ -144,7 +144,14 @@ const ContactPage = () => {
             Contact Me
           </Typography>
           
-          <Typography variant="h6" sx={{ textAlign: 'center', mb: 4, color: '#ccc' }}>
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              textAlign: 'center', 
+              color: '#ccc',
+              fontSize: '13px',
+            }}>
+            Discrepancy in one of my blogs? Please let me know.
           </Typography>
           
           {/* Social Links */}

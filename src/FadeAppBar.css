@@ -1,7 +1,7 @@
-.header {
-}
-
-.footer {
-  position: fixed;
-  background-color: white;
+.subtitle {
+  font-style: italic;
+  font-size: 15px;
+  margin-left: 8px;
+  opacity: 30%;
+  color: #FFFFFF;
 }

@@ -4,6 +4,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import { useNavigate, useLocation } from 'react-router-dom';
+import './FadeAppBar.css';
 
 const FadeAppBar = ({ position = "top" }) => {
   const [visible, setVisible] = useState(true);
@@ -58,7 +59,7 @@ const FadeAppBar = ({ position = "top" }) => {
           transition: "transform 0.3s ease-in-out",
           transform: visible ? "translateY(0)" : position === "top" ? "translateY(-100%)" : "translateY(100%)",
           backdropFilter: "blur(5px)",
-          height: "64px",
+          height: "50px",
           zIndex: 1200,
           background: "transparent",
         }}
@@ -67,7 +68,10 @@ const FadeAppBar = ({ position = "top" }) => {
           {position === "top" ? (
             <>
               <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: "#9b3dff" }}>
-                kat's blog
+                kat's blog  
+                <span className="subtitle">
+                 it's written in the stars
+                </span>
               </Typography>
               <Box>
                 <IconButton 
@@ -104,7 +108,7 @@ const FadeAppBar = ({ position = "top" }) => {
             </>
           ) : (
             <>
-              <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '50px' }}>
                 <Typography variant="body2" sx={{ color: "#fff", opacity: 0.7 }}>
                   © 2025 kmpow | @kpowkitty
                 </Typography>
@@ -126,7 +130,7 @@ const FadeAppBar = ({ position = "top" }) => {
           background: position === "top" 
             ? "linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 20%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0) 100%)"
             : "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 20%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0) 100%)",
-          pointerEvents: "none", // Allows clicks to pass through to stars
+          pointerEvents: "none",
           zIndex: 1100,
           transition: "opacity 0.3s ease-in-out",
           opacity: visible ? 1 : 0,

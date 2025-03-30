@@ -2,15 +2,16 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import StarOutlinedIcon from '@mui/icons-material/StarOutlined';
 import starsData from "./static/stars.json";
-import BlogPage from "./BlogPage"; // Import BlogPage component
+import BlogPage from "./BlogPage";
+import AboutPage from "./AboutPage";
 import './Stars.css';
 import FadeAppBar from "./FadeAppBar.js";
 import ContactPage from "./ContactPage.js";
 
-// StarField component that uses navigation
 function StarFieldContent() {
   const [stars, setStars] = useState([]);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [hoveredStar, setHoveredStar] = useState(null);
   const navigate = useNavigate();
 
   // Function to generate random position for inactive stars, avoiding overlap with active stars
@@ -124,14 +125,23 @@ function StarFieldContent() {
               transition: "transform 0.3s ease, box-shadow 0.3s ease",
               cursor: star.isActive ? "pointer" : "default", // Add pointer cursor for active stars
             }}
+            onMouseEnter={() => {
+              if (star.isActive && star.title) {
+                setHoveredStar(star); // Show tooltip
+              }
+            }}
+            onMouseLeave={() => {
+              setHoveredStar(null); // Hide tooltip
+            }}
           >
             <StarOutlinedIcon
               sx={{
-                fontSize: star.isActive ? 20 : star.size,
+                fontSize: star.isActive ? 30 : star.size,
                 color: star.isActive ? "#43fc1e" : "#25d602",
                 filter: star.isActive ? "drop-shadow(0 0 5px #43fc1e)" : "none", // Add glow effect for active stars
+                transition: star.isActive ? 'transform 0.3s ease-in-out' : "none",
                 "&:hover": star.isActive ? {
-                  transform: "scale(1.2)",
+                  transform: "scale(2)",
                   filter: "drop-shadow(0 0 8px #43fc1e)", // Enhanced glow on hover
                 } : {},
               }}
@@ -142,21 +152,21 @@ function StarFieldContent() {
                 }
               }}
             />
-            {/* Optional tooltip to show star title on hover */}
-            {star.isActive && star.title && (
+            {star.isActive && hoveredStar === star && (
               <div
                 style={{
+                  marginTop: "15px",
                   position: "absolute",
                   top: "100%",
                   left: "50%",
                   transform: "translateX(-50%)",
-                  backgroundColor: "rgba(0,0,0,0.7)",
-                  color: "white",
+                  backgroundColor: "#111111",
+                  color: "#00E5FF",
                   padding: "4px 8px",
                   borderRadius: "4px",
                   whiteSpace: "nowrap",
-                  opacity: 0,
-                  transition: "opacity 0.3s",
+                  opacity: 1,
+                  transition: "0.3s",
                   pointerEvents: "none",
                   fontSize: "12px",
                 }}
@@ -182,6 +192,7 @@ export default function StarField() {
           <Route path="/" element={<StarFieldContent />} />
           <Route path="/content/:slug" element={<BlogPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/about" element={<AboutPage />} />
         </Routes>
       </Router>
     </div>
