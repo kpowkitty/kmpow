@@ -108,16 +108,39 @@ const FadeAppBar = ({ position = "top" }) => {
             </>
           ) : (
             <>
-              <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', height: '50px' }}>
-                <Typography variant="body2" sx={{ color: "#fff", opacity: 0.7 }}>
-                  © 2025 kmpow | @kpowkitty
-                </Typography>
-              </Box>
-            </>
-          )}
-        </Toolbar>
-      </AppBar>
-
+    <Box sx={{ 
+      display: 'flex', 
+      justifyContent: 'space-between', 
+      alignItems: 'center',
+      width: '100%', 
+      height: '50px' 
+    }}>
+      {/* Logo on the left */}
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <img 
+          src="/FREEBSD_Logo_Horiz_Neg_RGB.png" 
+          alt="Logo" 
+          style={{ 
+            height: '20px', 
+            marginRight: '10px',
+            marginBottom: '10px',
+            opacity: 0.8
+          }} 
+        />
+      </Box>
+      
+      {/* Copyright text */}
+      <Typography variant="body2" sx={{ color: "#fff", opacity: 0.7, marginBottom: '10px' }}>
+        © 2025 kmpow | @kpowkitty
+      </Typography>
+      
+      {/* Empty box for symmetry */}
+      <Box sx={{ width: '30px' }}></Box>
+    </Box>
+  </>
+)}
+  </Toolbar>
+    </AppBar>
       {/* Extended Gradient Shadow */}
       <Box
         sx={{

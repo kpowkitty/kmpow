@@ -160,8 +160,8 @@ function StarFieldContent() {
                   top: "100%",
                   left: "50%",
                   transform: "translateX(-50%)",
-                  backgroundColor: "#111111",
-                  color: "#00E5FF",
+                  backgroundColor: "#000000",
+                  color: "#9b3dff",
                   padding: "4px 8px",
                   borderRadius: "4px",
                   whiteSpace: "nowrap",
@@ -169,6 +169,7 @@ function StarFieldContent() {
                   transition: "0.3s",
                   pointerEvents: "none",
                   fontSize: "12px",
+                  zIndex: "10",
                 }}
                 className="star-tooltip"
               >
