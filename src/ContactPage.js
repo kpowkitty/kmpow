@@ -5,66 +5,36 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import EmailIcon from '@mui/icons-material/Email';
 import SendIcon from '@mui/icons-material/Send';
 import FadeAppBar from './FadeAppBar';
+import axios from "axios";
 
-// Fetch CSRF Token from meta tag
-const getCSRFToken = () => {
-  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-};
+let formStatus;
 
-const ContactPage = () => {
-  const [formStatus, setFormStatus] = useState('idle'); // 'idle', 'submitting', 'success', 'error'
-     
-  useEffect(() => {
-    if (formStatus === 'success' || formStatus === 'error') {
-      const timer = setTimeout(() => {
-        setFormStatus('idle');
-      }, 10000); // 10 seconds
-      
-      return () => clearTimeout(timer);
-    }
-  }, [formStatus]); 
-  
-  const HandleSubmit = async (event) => {
-    event.preventDefault();
-    setFormStatus('submitting');
-   
-    const formData = new FormData();
-    formData.append('name', event.target.name.value);
-    formData.append('email', event.target.email.value);
-    formData.append('message', event.target.message.value);
+function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
 
-    const csrfToken = getCSRFToken(); // Get CSRF token
+  const HandleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const HandleSubmit = async (e) => {
+    e.preventDefault();
 
     try {
-      const response = await fetch('https://kmpow.com/send_message/', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'X-CSRFToken': csrfToken
-        },
-        body: formData,
-      });
-    
-      const text = await response.text(); // Read as text first
-    
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (jsonError) {
-        console.error('Response is not valid JSON:', text);
-        setFormStatus('error');
-        return;
-      }
-    
-      if (response.ok) {
-        setFormStatus('success');
-      } else {
-        console.error('Server error:', data);
-        setFormStatus('error');
-      }
+      formStatus = 'submitting';
+      await axios.post(
+        "http://192.168.86.72:8000/contact/submit_contact_form/",
+        formData
+      );
+      alert("Form Submitted");
+      setFormData({ name: "", email: "", message: "" });
     } catch (error) {
-      console.error('Network error:', error);
-      setFormStatus('error');
+      formStatus = 'error';
+      console.error("Error submitting form:", error);
+      alert("Error submitting form. Please try again later.");
     }
   };
 
@@ -222,6 +192,7 @@ const ContactPage = () => {
               label="Name"
               margin="normal"
               required
+              onChange={HandleChange}
               type="name"
               name="name"
               variant="outlined"
@@ -242,6 +213,7 @@ const ContactPage = () => {
               label="Email"
               margin="normal"
               required
+              onChange={HandleChange}
               type="email"
               name="email"
               variant="outlined"
@@ -264,6 +236,7 @@ const ContactPage = () => {
               type="message"
               name="message"
               required
+              onChange={HandleChange}
               multiline
               rows={4}
               variant="outlined"

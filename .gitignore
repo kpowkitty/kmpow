@@ -26,3 +26,6 @@ yarn-error.log*
 backend/kmpow/.env
 backend/kmpow/.venv
 backend/kmpow/__pycache__
+backend/contact/migrations/*
+backend/contact/__pycache__
+backend/db.sqlite3
