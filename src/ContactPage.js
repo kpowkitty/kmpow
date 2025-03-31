@@ -26,7 +26,7 @@ function ContactPage() {
     try {
       formStatus = 'submitting';
       await axios.post(
-        "http://192.168.86.72:8000/contact/submit_contact_form/",
+        "http://kmpow.com/contact/submit_contact_form/",
         formData
       );
       alert("Form Submitted");
