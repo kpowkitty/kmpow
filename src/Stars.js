@@ -102,7 +102,7 @@ function StarFieldContent() {
   return (
     <>
       <FadeAppBar position="top" />
-      <div
+      <div className='star-field'
         style={{
           position: "relative",
           width: "100vw",

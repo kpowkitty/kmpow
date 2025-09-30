@@ -1,0 +1,37 @@
+.back-button {
+  color: #7E00E6;
+  top: 15px;
+  left: 15px;
+  position: fixed;
+  z-index: 1000;
+  font-size: 26px !important;
+}
+
+.blog-accessories {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.scroll-top-button {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  display: none;
+}
+
+.scroll-top-button.visible {
+  opacity: 1 !important;
+  transform: translateY(0);
+  display: block !important;
+  bottom: 0px;
+  right: 0px;
+  position: fixed;
+  z-index: 1000;
+}
+
+.up-button {
+  font-size: 40px !important;
+  color: #7E00E6 !important;
+}

@@ -29,3 +29,7 @@ backend/kmpow/__pycache__
 backend/contact/migrations/*
 backend/contact/__pycache__
 backend/db.sqlite3
+
+deploy.sh
+
+public/content/priv

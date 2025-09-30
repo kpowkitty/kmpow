@@ -114,7 +114,6 @@ kyua {
 
         allow.chflags;
         mount.fstab = "${jail_path}/${name}.fstab";
-
 }
 ```
 
@@ -210,7 +209,7 @@ From here on out, `$USER` refers to the name you just gave your jail user.
 ```
 
 ```bash
-# /home/$USER/.ssh
+# /home/$USER/.ssh/config
 Host github.com  
     HostName github.com   
     User git  
@@ -249,8 +248,19 @@ Open Github, navigate to your settings, and click SSH/GPG Keys on the left hand 
 # ssh -T git@github.com
 ```
 
-You should receive a success message with that command. If you do not, you messed up throughout this process and need to redo this section.  
-Now, bring your desired git repo down into `/usr/src` to make the tests.
+You should receive a success message with that command. If you do not, you 
+messed up throughout this process and need to redo this section. A helpful
+debugging command is to instead:
+
+```bash
+# ssh -vT git@github.com
+```
+
+It will show you how it is trying to authenticate, and a potential issue is
+that the SSH agent did not get your key properly, or it is sourcing the
+wrong place entirely.
+
+Upon success, bring your desired git repo down into `/usr/src` to make the tests.
 
 ```bash
 # mkdir -p /usr/src/ 
@@ -267,9 +277,11 @@ Now, bring your desired git repo down into `/usr/src` to make the tests.
 
 ### Kyua Testing
 
-Now with that setup, you can navigate to the test suite in FreeBSD’s source tree that you would like to run Kyua tests.   
+Now with that setup, you can navigate to your testing location inside the source
+tree.   
 
 ```bash
+# Notice relative path here, and should end in /tests if it set up already.
 # cd path/to/the/tests
 ```
 ```bash
@@ -282,6 +294,7 @@ Now with that setup, you can navigate to the test suite in FreeBSD’s source tr
 If this is successful, you can now navigate to the same tests in:
 
 ```bash
+# Notice absolute path here, /usr/tests/
 # cd /usr/tests/path/to/the/tests
 ```
 ```bash

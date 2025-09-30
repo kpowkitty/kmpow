@@ -7,9 +7,10 @@ import SendIcon from '@mui/icons-material/Send';
 import FadeAppBar from './FadeAppBar';
 import axios from "axios";
 
-let formStatus;
 
 function ContactPage() {
+  const [formStatus, setFormStatus] = useState("");
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -24,17 +25,31 @@ function ContactPage() {
     e.preventDefault();
 
     try {
-      formStatus = 'submitting';
+      setFormStatus("submitting");
+    
+      // Get CSRF token from cookie
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+      }
+      const csrftoken = getCookie('csrftoken');
+    
       await axios.post(
-        "http://192.168.86.72:8000/contact/submit_contact_form/",
-        formData
+        "https://kmpow.com/contact/submit_contact_form/",
+        formData,
+        {
+          headers: {
+            'X-CSRFToken': csrftoken,
+            'Content-Type': 'application/json',
+          },
+        }
       );
-      alert("Form Submitted");
+      setFormStatus("succes");
       setFormData({ name: "", email: "", message: "" });
     } catch (error) {
-      formStatus = 'error';
+      setFormStatus("error");
       console.error("Error submitting form:", error);
-      alert("Error submitting form. Please try again later.");
     }
   };
 

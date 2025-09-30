@@ -7,38 +7,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import './FadeAppBar.css';
 
 const FadeAppBar = ({ position = "top" }) => {
-  const [visible, setVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      // For top bar: hide when scrolling down, show when scrolling up
-      if (position === "top") {
-        if (currentScrollY > lastScrollY && visible && currentScrollY > 100) {
-          setVisible(false);
-        } else if (currentScrollY < lastScrollY && !visible) {
-          setVisible(true);
-        }
-      } 
-      // For bottom bar: hide when scrolling up, show when scrolling down
-      else {
-        if (currentScrollY < lastScrollY && visible && currentScrollY < document.body.scrollHeight - window.innerHeight - 100) {
-          setVisible(false);
-        } else if (currentScrollY > lastScrollY && !visible) {
-          setVisible(true);
-        }
-      }
-      
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY, visible, position]);
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -48,7 +18,6 @@ const FadeAppBar = ({ position = "top" }) => {
 
   return (
     <>
-      {/* App Bar */}
       <AppBar 
         position="fixed" 
         color="transparent"
@@ -57,7 +26,7 @@ const FadeAppBar = ({ position = "top" }) => {
           top: position === "top" ? 0 : "auto",
           bottom: position === "bottom" ? 0 : "auto",
           transition: "transform 0.3s ease-in-out",
-          transform: visible ? "translateY(0)" : position === "top" ? "translateY(-100%)" : "translateY(100%)",
+          transform: "translateY(0)",
           backdropFilter: "blur(5px)",
           height: "50px",
           zIndex: 1200,
@@ -156,7 +125,6 @@ const FadeAppBar = ({ position = "top" }) => {
           pointerEvents: "none",
           zIndex: 1100,
           transition: "opacity 0.3s ease-in-out",
-          opacity: visible ? 1 : 0,
         }}
       />
     </>

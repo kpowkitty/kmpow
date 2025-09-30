@@ -20,5 +20,16 @@
       "x": 39,
       "y": 42
     }
+  },
+  {
+    "id": "star-3",
+    "category": "gsoc",
+    "title": "Google Summer of Code '25 @ FreeBSD Write-Up",
+    "description": "Details of my GSoC project.",
+    "slug": "gsoc-writeup",
+    "position": {
+      "x": 46,
+      "y": 46
+    }
   }
 ]

@@ -9,6 +9,7 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import './BlogPage.css';
+import BlogAccessories from './BlogAccessories.js';
 
 // Define custom style for variables
 const customStyle = {
@@ -116,6 +117,7 @@ export default function BlogPage() {
 
   return (
     <div className="blog-content">
+    <BlogAccessories />
       <Container className="blog-container"
         disableGutters
         maxWidth={false}
@@ -125,7 +127,6 @@ export default function BlogPage() {
             overflowWrap: 'break-word',
             whiteSpace: 'normal',
           },
-          paddingTop: '10px',
           margin: '0 auto',
         }}
       >
@@ -138,7 +139,6 @@ export default function BlogPage() {
               overflowWrap: 'break-word',
               whiteSpace: 'normal',
             },
-            paddingTop: '125px',
           }}
           components={{
             code: CodeBlock,
