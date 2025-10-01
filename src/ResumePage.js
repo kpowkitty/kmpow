@@ -5,6 +5,8 @@ import { useLocation } from "react-router-dom";
 import ReactMarkdown from 'react-markdown';
 import './AboutPage.css';
 
+const ROOT = process.env.ROOT || '';
+
 const ResumePage = () => {
   const location = useLocation();
   const [workExperience, setWorkExperience] = useState([]);
@@ -27,10 +29,10 @@ const ResumePage = () => {
     const fetchResumeData = async () => {
       try {
         const [workRes, projectsRes, educationRes, skillsRes] = await Promise.all([
-          fetch('/resume/work-experience/'),
-          fetch('/resume/projects/'),
-          fetch('/resume/education/'),
-          fetch('/resume/skills/')
+          fetch('${ROOT}/api/resume/work-experience/'),
+          fetch('${ROOT}/api/resume/projects/'),
+          fetch('${ROOT}/api/resume/education/'),
+          fetch('${ROOT}/api/resume/skills/')
         ]);
 
         const workData = await workRes.json();

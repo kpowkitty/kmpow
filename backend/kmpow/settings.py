@@ -157,6 +157,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 CORS_ALLOWED_ORIGINS = [
     "https://kmpow.com",
+    "https://localhost:3000",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
