@@ -27,10 +27,10 @@ const ResumePage = () => {
     const fetchResumeData = async () => {
       try {
         const [workRes, projectsRes, educationRes, skillsRes] = await Promise.all([
-          fetch('/api/resume/work-experience/'),
-          fetch('/api/resume/projects/'),
-          fetch('/api/resume/education/'),
-          fetch('/api/resume/skills/')
+          fetch('/resume/work-experience/'),
+          fetch('/resume/projects/'),
+          fetch('/resume/education/'),
+          fetch('/resume/skills/')
         ]);
 
         const workData = await workRes.json();
@@ -144,12 +144,13 @@ const ResumePage = () => {
           <Divider sx={{ bgcolor: 'rgba(155, 61, 255, 0.3)', my: 4 }} />
 
           {/* Work Experience Section */}
-          {workExperience.length > 0 && (
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h4" sx={{ color: '#9b3dff', mb: 3, fontWeight: 'bold' }}>
-                Work Experience
-              </Typography>
-              {workExperience.map((work) => (
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h4" sx={{ color: '#9b3dff', mb: 2, fontWeight: 'bold' }}>
+              Work Experience
+            </Typography>
+            <Divider sx={{ bgcolor: 'rgba(155, 61, 255, 0.3)', mb: 3 }} />
+            {workExperience.length > 0 ? (
+              workExperience.map((work) => (
                 <Box
                   key={work.id}
                   sx={{
@@ -183,17 +184,22 @@ const ResumePage = () => {
                     <ReactMarkdown>{work.description}</ReactMarkdown>
                   </Box>
                 </Box>
-              ))}
-            </Box>
-          )}
+              ))
+            ) : (
+              <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
+                No work experience added yet.
+              </Typography>
+            )}
+          </Box>
 
           {/* Projects Section */}
-          {projects.length > 0 && (
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h4" sx={{ color: '#9b3dff', mb: 3, fontWeight: 'bold' }}>
-                Projects
-              </Typography>
-              {projects.map((project) => (
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h4" sx={{ color: '#9b3dff', mb: 2, fontWeight: 'bold' }}>
+              Projects
+            </Typography>
+            <Divider sx={{ bgcolor: 'rgba(155, 61, 255, 0.3)', mb: 3 }} />
+            {projects.length > 0 ? (
+              projects.map((project) => (
                 <Box
                   key={project.id}
                   sx={{
@@ -216,17 +222,22 @@ const ResumePage = () => {
                     <ReactMarkdown>{project.description}</ReactMarkdown>
                   </Box>
                 </Box>
-              ))}
-            </Box>
-          )}
+              ))
+            ) : (
+              <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
+                No projects added yet.
+              </Typography>
+            )}
+          </Box>
 
           {/* Education Section */}
-          {education.length > 0 && (
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h4" sx={{ color: '#9b3dff', mb: 3, fontWeight: 'bold' }}>
-                Education
-              </Typography>
-              {education.map((edu) => (
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h4" sx={{ color: '#9b3dff', mb: 2, fontWeight: 'bold' }}>
+              Education
+            </Typography>
+            <Divider sx={{ bgcolor: 'rgba(155, 61, 255, 0.3)', mb: 3 }} />
+            {education.length > 0 ? (
+              education.map((edu) => (
                 <Box
                   key={edu.id}
                   sx={{
@@ -253,17 +264,22 @@ const ResumePage = () => {
                     </Box>
                   )}
                 </Box>
-              ))}
-            </Box>
-          )}
-
-          {/* Skills Section */}
-          {skills.length > 0 && (
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="h4" sx={{ color: '#9b3dff', mb: 3, fontWeight: 'bold' }}>
-                Skills
+              ))
+            ) : (
+              <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
+                No education added yet.
               </Typography>
-              {skills.map((skillCategory) => (
+            )}
+          </Box>
+
+          {/* Skills and Passions Section */}
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="h4" sx={{ color: '#9b3dff', mb: 2, fontWeight: 'bold' }}>
+              Skills and Passions
+            </Typography>
+            <Divider sx={{ bgcolor: 'rgba(155, 61, 255, 0.3)', mb: 3 }} />
+            {skills.length > 0 ? (
+              skills.map((skillCategory) => (
                 <Box
                   key={skillCategory.id}
                   sx={{
@@ -294,9 +310,13 @@ const ResumePage = () => {
                     ))}
                   </Box>
                 </Box>
-              ))}
-            </Box>
-          )}
+              ))
+            ) : (
+              <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
+                No skills added yet.
+              </Typography>
+            )}
+          </Box>
         </Paper>
       </Container>
 

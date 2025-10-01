@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import StarOutlinedIcon from '@mui/icons-material/StarOutlined';
-import starsData from "./static/stars.json";
-import BlogPage from "./BlogPage";
-import AboutPage from "./AboutPage";
-import './Stars.css';
 import FadeAppBar from "./FadeAppBar.js";
-import ContactPage from "./ContactPage.js";
+import starsData from "./static/stars.json";
+import './Stars.css';
 
 function StarFieldContent() {
   const [stars, setStars] = useState([]);
@@ -184,18 +181,4 @@ function StarFieldContent() {
   );
 }
 
-// Main component with routing
-export default function StarField() {
-  return (
-    <div className="blog-wrapper">
-      <Router>
-        <Routes>
-          <Route path="/" element={<StarFieldContent />} />
-          <Route path="/content/:slug" element={<BlogPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/about" element={<AboutPage />} />
-        </Routes>
-      </Router>
-    </div>
-  );
-}
+export default StarFieldContent;

@@ -104,7 +104,7 @@ const AboutPage = () => {
           }}>
             <Typography variant="body1" sx={{ color: '#fff', lineHeight: 1.8 }}>
               {/* Replace this with your bio */}
-             My name is Kayla, but I go by Kat, Luna, or Bee. I am a junior computer
+             My name is Kayla, but I go by Kat, Luna, or Bee. I am a Senior computer
               scientist at San Francisco State University. I am currently a research
               assistant for Dr. El Alaoui and a software engineer intern for Planet
               Bee Foundation.
