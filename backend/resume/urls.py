@@ -4,15 +4,17 @@ from .views import (
     WorkExperienceViewSet,
     ProjectViewSet,
     EducationViewSet,
-    SkillCategoryViewSet
+    SkillCategoryViewSet,
+    ConsolidatedTechList
 )
 
 router = DefaultRouter()
-router.register(r'work-experience', WorkExperienceViewSet, basename='work-experience')
-router.register(r'projects', ProjectViewSet, basename='projects')
-router.register(r'education', EducationViewSet, basename='education')
-router.register(r'skills', SkillCategoryViewSet, basename='skills')
+router.register(r'work', WorkExperienceViewSet)
+router.register(r'projects', ProjectViewSet)
+router.register(r'education', EducationViewSet)
+router.register(r'skills', SkillCategoryViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('api/', include(router.urls)),
+    path('api/tech-stack/', ConsolidatedTechList.as_view(), name='consolidated-tech-stack'),
 ]
