@@ -4,7 +4,6 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import EmailIcon from '@mui/icons-material/Email';
 import SendIcon from '@mui/icons-material/Send';
-import FadeAppBar from './FadeAppBar';
 import axios from "axios";
 
 
@@ -58,7 +57,7 @@ function ContactPage() {
       sx={{
         position: 'relative',
         minHeight: '100vh',
-        backgroundColor: 'black',
+        backgroundColor: 'transparent',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -69,10 +68,7 @@ function ContactPage() {
         pt: 10, // Add padding at top to account for app bar
       }}
     >
-      {/* App Bars */}
-      <FadeAppBar position="top" />
-      <FadeAppBar position="bottom" />
-      
+
       {/* Star-like particles in background */}
       <Box
         sx={{
@@ -82,27 +78,9 @@ function ContactPage() {
           right: 0,
           bottom: 0,
           overflow: 'hidden',
-          zIndex: 0,
+          zIndex: 2,
         }}
       >
-        {/* Generate 50 small stars */}
-        {[...Array(50)].map((_, i) => (
-          <Box
-            key={i}
-            sx={{
-              position: 'absolute',
-              width: Math.random() * 3 + 1,
-              height: Math.random() * 3 + 1,
-              backgroundColor: i % 5 === 0 ? '#9b3dff' : '#2cfc03',
-              borderRadius: '50%',
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              animation: `twinkle ${Math.random() * 5 + 3}s infinite ease-in-out`,
-              opacity: Math.random() * 0.5 + 0.5,
-              boxShadow: i % 5 === 0 ? '0 0 10px #9b3dff' : '0 0 5px #2cfc03',
-            }}
-          />
-        ))}
       </Box>
 
       {/* Main Content */}

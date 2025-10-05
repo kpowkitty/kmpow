@@ -1,7 +1,5 @@
 .back-button {
   color: #7E00E6;
-  top: 15px;
-  left: 15px;
   position: fixed;
   z-index: 1000;
   font-size: 26px !important;
@@ -25,7 +23,6 @@
   opacity: 1 !important;
   transform: translateY(0);
   display: block !important;
-  bottom: 0px;
   right: 0px;
   position: fixed;
   z-index: 1000;

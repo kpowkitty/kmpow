@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import StarOutlinedIcon from '@mui/icons-material/StarOutlined';
-import FadeAppBar from "./FadeAppBar.js";
-import starsData from "./static/stars.json";
-import './Stars.css';
+import ConstellationLines from "./ConstellationLines.js";
 
 function StarFieldContent() {
   const [stars, setStars] = useState([]);
@@ -11,173 +9,100 @@ function StarFieldContent() {
   const [hoveredStar, setHoveredStar] = useState(null);
   const navigate = useNavigate();
 
-  // Function to generate random position for inactive stars, avoiding overlap with active stars
-  const getRandomPosition = (takenPositions) => {
-    let x, y;
-    let overlap;
-
-    do {
-      x = Math.random() * 100;
-      y = Math.random() * 100;
-
-      // Ensure no overlap with already taken positions
-      overlap = takenPositions.some(
-        (pos) => Math.abs(pos.x - x) < 5 && Math.abs(pos.y - y) < 5
-      );
-    } while (overlap);
-
-    takenPositions.push({ x, y });
-    return { x, y };
-  };
-
-  // Function to generate a random size between 1px and 20px
-  const getRandomSize = () => {
-    return Math.random() * (20 - 1) + 1;
-  };
-
-  // Adjust the number of inactive stars based on screen width
-  const calculateNumberOfInactiveStars = () => {
-    if (windowWidth > 1000) {
-      return 130;
-    } else if (windowWidth > 800) {
-      return 100;
-    } else if (windowWidth > 600) {
-      return 70;
-    } else if (windowWidth > 400) {
-      return 40;
-    } else if (windowWidth > 200) {
-      return 20;
-    } else {
-      return 10;
-    }
-  };
-
+  // Fetch blogs and generate stars
   useEffect(() => {
-    const takenPositions = [];
+    const fetchBlogs = async () => {
+      const res = await fetch('/api/blogs/');
+      const data = await res.json();
+      const taken = [];
 
-    // Generate active stars with positions from the JSON file
-    const activeStars = starsData.map((star) => {
-      const position = {
-        x: star.position.x,
-        y: star.position.y,
-      };
+      const active = data.map(blog => {
+        taken.push({ x: blog.position.x, y: blog.position.y });
+        return { ...blog, position: blog.position, isActive: true };
+      });
 
-      // Ensure no overlap with other active stars
-      takenPositions.push({ x: position.x, y: position.y });
+      const inactiveCount = windowWidth > 1000 ? 130 :
+                            windowWidth > 800 ? 100 :
+                            windowWidth > 600 ? 70 :
+                            windowWidth > 400 ? 40 :
+                            windowWidth > 200 ? 20 : 10;
 
-      return { ...star, position, isActive: true };
-    });
+      const inactive = Array.from({ length: inactiveCount }, (_, i) => {
+        let x, y;
+        do { x = Math.random()*100; y = Math.random()*100 } 
+        while (taken.some(p => Math.abs(p.x-x)<5 && Math.abs(p.y-y)<5));
+        taken.push({ x, y });
+        return { id:`inactive-${i}`, position:{x,y}, size: Math.random()*19+1, isActive:false };
+      });
 
-    // Generate inactive stars based on window size, ensuring they don't overlap with active stars
-    const inactiveStars = Array.from({ length: calculateNumberOfInactiveStars() }, (_, i) => ({
-      id: `inactive-${i}`,
-      title: null,
-      desc: null,
-      slug: null,
-      position: getRandomPosition(takenPositions),
-      size: getRandomSize(),
-      isActive: false,
-    }));
+      setStars([...active, ...inactive]);
+    };
 
-    setStars([...activeStars, ...inactiveStars]);
+    fetchBlogs();
   }, [windowWidth]);
 
-  // Update the window width on resize
+  // Track window resize
   useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
+    const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
-
-    // Clean up the event listener on unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
-    <>
-      <FadeAppBar position="top" />
-      <div className='star-field'
-        style={{
-          position: "relative",
-          width: "100vw",
-          height: "100vh",
-          backgroundColor: "black",
-          overflow: "hidden",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >   
-        {stars.map((star) => (
-          <div
-            key={star.id}
-            style={{
-              position: "absolute",
-              top: `${star.position.y}%`,
-              left: `${star.position.x}%`,
-              display: "inline-block",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
-              cursor: star.isActive ? "pointer" : "default", // Add pointer cursor for active stars
+    <div style={{
+      position: 'fixed', top:0, left:0, width:'100vw', height:'100vh',
+      overflow:'visible', zIndex: 1, pointerEvents:'none', backgroundColor:'transparent'
+    }}>
+      {/* Constellation lines */}
+      <ConstellationLines stars={stars.filter(s => s.isActive)} style={{ pointerEvents:'none' }} />
+
+      {stars.map(star => (
+        <div
+          key={star.id}
+          style={{
+            position: 'absolute',
+            top: `${star.position.y}%`,
+            left: `${star.position.x}%`,
+            cursor: star.isActive ? 'pointer' : 'default',
+            pointerEvents: 'auto'
+          }}
+          onMouseEnter={() => star.isActive && setHoveredStar(star)}
+          onMouseLeave={() => setHoveredStar(null)}
+        >
+          <StarOutlinedIcon
+            sx={{
+              fontSize: star.isActive ? 30 : star.size,
+              color: star.isActive ? "#43fc1e" : "#25d602",
+              filter: star.isActive ? "drop-shadow(0 0 5px #43fc1e)" : "none",
+              transition: 'transform 0.3s ease-in-out',
+              "&:hover": star.isActive ? { transform: "scale(2)", filter:"drop-shadow(0 0 8px #43fc1e)" } : {}
             }}
-            onMouseEnter={() => {
-              if (star.isActive && star.title) {
-                setHoveredStar(star); // Show tooltip
-              }
-            }}
-            onMouseLeave={() => {
-              setHoveredStar(null); // Hide tooltip
-            }}
-          >
-            <StarOutlinedIcon
-              sx={{
-                fontSize: star.isActive ? 30 : star.size,
-                color: star.isActive ? "#43fc1e" : "#25d602",
-                filter: star.isActive ? "drop-shadow(0 0 5px #43fc1e)" : "none", // Add glow effect for active stars
-                transition: star.isActive ? 'transform 0.3s ease-in-out' : "none",
-                "&:hover": star.isActive ? {
-                  transform: "scale(2)",
-                  filter: "drop-shadow(0 0 8px #43fc1e)", // Enhanced glow on hover
-                } : {},
-              }}
-              onClick={() => {
-                if (star.isActive && star.slug) {
-                  console.log(`Navigating to: /content/${star.slug}`); // Debug log
-                  navigate(`/content/${star.slug}`);
-                }
-              }}
-            />
-            {star.isActive && hoveredStar === star && (
-              <div
-                style={{
-                  marginTop: "15px",
-                  position: "absolute",
-                  top: "100%",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  backgroundColor: "#000000",
-                  color: "#9b3dff",
-                  padding: "4px 8px",
-                  borderRadius: "4px",
-                  whiteSpace: "nowrap",
-                  opacity: 1,
-                  transition: "0.3s",
-                  pointerEvents: "none",
-                  fontSize: "12px",
-                  zIndex: "10",
-                }}
-                className="star-tooltip"
-              >
-                {star.title}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-      <FadeAppBar position="bottom" />
-    </>
+            onClick={() => star.isActive && star.slug && navigate(`/content/${star.slug}`)}
+          />
+
+          {/* Tooltip as fixed element */}
+          {star.isActive && hoveredStar === star && (
+            <div style={{
+              position: 'fixed',
+              top: `${star.position.y}vh`,
+              left: `${star.position.x}vw`,
+              transform: 'translate(-50%, 30px)',
+              backgroundColor: '#000',
+              color: '#9b3dff',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              whiteSpace: 'nowrap',
+              pointerEvents: 'none',
+              fontSize: '12px',
+              zIndex: 10,
+              opacity: 1
+            }}>
+              {star.title}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
   );
 }
 

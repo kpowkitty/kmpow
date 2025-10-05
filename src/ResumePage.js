@@ -1,10 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Paper, Container, Divider, Chip, Link } from '@mui/material';
-import FadeAppBar from './FadeAppBar';
+import { Masonry } from '@mui/lab';
 import { useLocation } from "react-router-dom";
 import ReactMarkdown from 'react-markdown';
+import pluralize from 'pluralize';
+import LoadingStars from './LoadingStars';
 
 const ROOT = process.env.ROOT || '';
+
+const pluralExceptions = {
+  'API': 'APIs',
+  'System Administration': 'System Administration',
+  'Virtualization': 'Virtualization',
+  'Backend': 'Backend',
+  'Frontend': 'Frontend',
+  'Documentation': 'Documentation',
+};
+
+const displayCategory = (category, count) => {
+  if (count == 1) {
+    return category;
+  }
+
+  return pluralExceptions[category] || pluralize(category);
+}
 
 /**
  * Generic fetch helper
@@ -49,12 +68,13 @@ const Card = ({ children }) => (
 const WorkExperienceItem = ({ work }) => (
   <Card>
     <Typography variant="h5" sx={{ color: '#2cfc03', fontWeight: 'bold' }}>{work.title}</Typography>
-    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
       <Typography variant="h6" sx={{ color: '#fff' }}>{work.company}</Typography>
       <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)' }}>
         {work.start_date} - {work.end_date}
       </Typography>
     </Box>
+
     {work.subtitle && (
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.5, alignItems: 'center' }}>
         <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>{work.subtitle}</Typography>
@@ -70,11 +90,19 @@ const WorkExperienceItem = ({ work }) => (
         )}
       </Box>
     )}
+
+    {work.tech_tags && work.tech_tags.length > 0 && (
+      <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', mt: 1 }}>
+        <strong>Tech Stack:</strong> {work.tech_tags.map(tag => tag.name).join(', ')}
+      </Typography>
+    )}
+
     <Box sx={{ mt: 2, color: '#fff', '& p': { lineHeight: 1.8 } }}>
       <ReactMarkdown>{work.description}</ReactMarkdown>
     </Box>
   </Card>
 );
+
 
 /**
  * ProjectItem
@@ -86,9 +114,11 @@ const ProjectItem = ({ project }) => (
         {project.name}
       </Typography>
     </Link>
-    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', mt: 1 }}>
-      <strong>Tech Stack:</strong> {project.tech_stack}
-    </Typography>
+    {project.tech_tags && project.tech_tags.length > 0 && (
+      <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', mt: 1 }}>
+        <strong>Tech Stack:</strong> {project.tech_tags.map(tag => tag.name).join(', ')}
+      </Typography>
+    )}
     <Box sx={{ mt: 2, color: '#fff', '& p': { lineHeight: 1.8 } }}>
       <ReactMarkdown>{project.description}</ReactMarkdown>
     </Box>
@@ -117,19 +147,43 @@ const EducationItem = ({ edu }) => (
  * SkillCategoryItem
  */
 const SkillCategoryItem = ({ category }) => (
-  <Card>
-    <Typography variant="h6" sx={{ color: '#2cfc03', fontWeight: 'bold', mb: 2 }}>{category.category}</Typography>
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+  <Paper sx={{
+    p: 2,
+    borderRadius: 2,
+    border: '1px solid rgba(155, 61, 255, 0.3)',
+    backgroundColor: 'rgba(155, 61, 255, 0.05)'
+  }}>
+    <Typography variant="h6" sx={{ color: '#2cfc03', fontWeight: 'bold', mb: 2 }}>
+      {displayCategory(category.category, category.tags.length)}
+    </Typography>
+
+    <Masonry columns={{ xs: 1 }} spacing={1}>
       {category.tags.map((tag, i) => (
-        <Chip key={i} label={tag} sx={{
-          backgroundColor: 'rgba(155, 61, 255, 0.2)',
-          color: '#fff',
-          border: '1px solid rgba(155, 61, 255, 0.5)',
-          '&:hover': { backgroundColor: 'rgba(155, 61, 255, 0.3)' }
-        }} />
+        <Chip
+          key={i}
+          label={tag}
+          sx={{
+            backgroundColor: 'rgba(155, 61, 255, 0.2)',
+            color: '#fff',
+            border: '1px solid rgba(155, 61, 255, 0.5)',
+            '&:hover': { backgroundColor: 'rgba(155, 61, 255, 0.3)' },
+            lineHeight: 1.2,           // optional: adjust spacing between lines
+            px: 1.5,                   // horizontal padding
+            py: 0.5,                   // vertical padding
+            maxWidth: '100%',           // ensure it doesn’t overflow container
+            height: 'auto',             // let height expand with text
+            '& .MuiChip-label': {
+              whiteSpace: 'normal',
+              overflow: 'visible',
+              textOverflow: 'unset',
+              lineHeight: 1.2,
+              textAlign: 'center',
+            }
+          }}
+        />
       ))}
-    </Box>
-  </Card>
+    </Masonry>
+  </Paper>
 );
 
 const ResumePage = () => {
@@ -144,7 +198,7 @@ const ResumePage = () => {
     const fetchAll = async () => {
       try {
         const [workData, projectData, eduData, techData] = await Promise.all([
-          fetchJSON(`${ROOT}/api/resume/work/`),
+          fetchJSON(`${ROOT}/api/resume/work-experience/`),
           fetchJSON(`${ROOT}/api/resume/projects/`),
           fetchJSON(`${ROOT}/api/resume/education/`),
           fetchJSON(`${ROOT}/api/tech-stack/`)
@@ -167,36 +221,12 @@ const ResumePage = () => {
     fetchAll();
   }, []);
 
-  if (loading) return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'black', color: '#9b3dff' }}>
-      <Typography variant="h4">Loading...</Typography>
-    </Box>
-  );
+  if (loading) return <LoadingStars message="Loading..." />;
 
   return (
-    <Box sx={{ position: 'relative', minHeight: '100vh', backgroundColor: 'black', color: 'white', pb: 10, pt: 10 }}>
-      <FadeAppBar position="top" />
-      <FadeAppBar position="bottom" />
+    <Box sx={{ position: 'relative', minHeight: '100vh', backgroundColor: 'transparent', color: 'white', pb: 10, pt: 10 }}>
 
-      {/* Background stars */}
-      <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', zIndex: 0 }}>
-        {[...Array(50)].map((_, i) => (
-          <Box key={i} sx={{
-            position: 'absolute',
-            width: Math.random() * 3 + 1,
-            height: Math.random() * 3 + 1,
-            backgroundColor: i % 5 === 0 ? '#9b3dff' : '#2cfc03',
-            borderRadius: '50%',
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            animation: `twinkle ${Math.random() * 5 + 3}s infinite ease-in-out`,
-            opacity: Math.random() * 0.5 + 0.5,
-            boxShadow: i % 5 === 0 ? '0 0 10px #9b3dff' : '0 0 5px #2cfc03',
-          }} />
-        ))}
-      </Box>
-
-      <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
+      <Container maxWidth="md" sx={{ position: 'relative', zIndex: 2, mt: '8vh' }}>
         <Paper sx={{ padding: 4, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(10px)', border: '1px solid rgba(155, 61, 255, 0.3)', borderRadius: 2 }} elevation={6}>
           <Typography variant="h3" sx={{ textAlign: 'center', color: '#9b3dff', fontWeight: 'bold', mb: 1 }}>Resume</Typography>
           <Divider sx={{ bgcolor: 'rgba(155, 61, 255, 0.3)', my: 4 }} />
@@ -216,9 +246,22 @@ const ResumePage = () => {
               : <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>No education added yet.</Typography>}
           </Section>
 
+
           <Section title="Skills and Passions">
-            {skills.length ? skills.map((s, i) => <SkillCategoryItem key={i} category={s} />)
-              : <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>No skills added yet.</Typography>}
+            {skills.length ? (
+              <Masonry
+                columns={{ xs: 1, sm: 2, md: 3 }}
+                spacing={2}
+              >
+                {skills.map((s, i) => (
+                  <SkillCategoryItem key={i} category={s} />
+                ))}
+              </Masonry>
+            ) : (
+              <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
+                No skills added yet.
+              </Typography>
+            )}
           </Section>
         </Paper>
       </Container>

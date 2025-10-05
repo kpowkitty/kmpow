@@ -41,3 +41,4 @@ deploy.sh
 
 public/content/priv
 yarn.lock
+package-lock.json

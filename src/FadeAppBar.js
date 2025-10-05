@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AppBar, Toolbar, Typography, IconButton, Box } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
+import DescriptionIcon from '@mui/icons-material/Description';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './FadeAppBar.css';
@@ -53,6 +54,7 @@ const FadeAppBar = ({ position = "top" }) => {
                 >
                   <HomeIcon />
                 </IconButton>
+                
                 <IconButton 
                   color="inherit"
                   onClick={() => handleNavigation("/about")}
@@ -63,6 +65,18 @@ const FadeAppBar = ({ position = "top" }) => {
                 >
                   <InfoIcon />
                 </IconButton>
+                
+                <IconButton 
+                  color="inherit"
+                  onClick={() => navigate('/resume')}
+                  sx={{
+                    color: location.pathname === "/resume" ? "#9b3dff" : "#fff",
+                    "&:hover": { color: "#9b3dff" }
+                  }}
+                >
+                  <DescriptionIcon />
+                </IconButton>
+                
                 <IconButton 
                   color="inherit"
                   onClick={() => handleNavigation("/contact")}
@@ -118,7 +132,7 @@ const FadeAppBar = ({ position = "top" }) => {
           right: 0,
           top: position === "top" ? 0 : "auto",
           bottom: position === "bottom" ? 0 : "auto",
-          height: position === "top" ? "35vh" : "35vh",
+          height: position === "top" ? "25vh" : "35vh",
           background: position === "top" 
             ? "linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 20%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0) 100%)"
             : "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 20%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0) 100%)",

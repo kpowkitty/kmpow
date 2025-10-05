@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import rehypeRaw from 'rehype-raw';
@@ -32,7 +33,7 @@ const customStyle = {
 const CodeBlock = ({ node, inline, className, children, ...props }) => {
   const [copied, setCopied] = useState(false);
   const match = /language-(\w+)/.exec(className || '');
-  
+
   const handleCopy = async () => {
     await navigator.clipboard.writeText(String(children).replace(/\n$/, ''));
     setCopied(true);
@@ -78,8 +79,8 @@ const CodeBlock = ({ node, inline, className, children, ...props }) => {
       </button>
     </div>
   ) : (
-    <code 
-      className={className} 
+    <code
+      className={className}
       style={{
           fontFamily: 'monospace',
       }}
@@ -96,115 +97,170 @@ export default function BlogPage() {
   const [title, setTitle] = useState('');
 
   useEffect(() => {
-    // Fixed the fetch path by adding quotes
-    fetch(`/content/${slug}.md`)
-      .then((response) => {
-        if (!response.ok) throw new Error('Content not found');
-        return response.text();
+    fetch(`/api/blogs/${slug}/`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Blog not found');
+        return res.json();
       })
-      .then((text) => {
-        // Extract title from the first line of the markdown
-        const lines = text.split('\n');
-        const titleMatch = lines[0].match(/^#\s*(.+)/);
-        setTitle(titleMatch ? titleMatch[1] : slug);
-        setContent(text);
+      .then((data) => {
+        setTitle(data.title);
+        setContent(data.content);
       })
       .catch(() => {
         setTitle('Error');
-        setContent('Error loading content.');
+        setContent('Error loading blog.');
       });
   }, [slug]);
 
   return (
-    <div className="blog-content">
-    <BlogAccessories />
-      <Container className="blog-container"
-        disableGutters
-        maxWidth={false}
-        sx={{
-          '& pre': {
-            wordWrap: 'break-word',
-            overflowWrap: 'break-word',
-            whiteSpace: 'normal',
-          },
+    <Box
+      className="blog-content"
+      sx={{
+        position: 'relative',
+        minHeight: '100vh',
+        backgroundColor: 'transparent',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white',
+        padding: { xs: 2, md: 4 },
+        pb: 10,
+        pt: 10,
+      }}
+    >
+      <BlogAccessories />
+      
+      {/* Main Content */}
+      <Container 
+        maxWidth="md" 
+        sx={{ 
+          position: 'relative', 
+          zIndex: 1,
           margin: '0 auto',
+          marginTop: '12vh',
         }}
       >
-        <ReactMarkdown 
-          rehypePlugins={[rehypeRaw]}
-          remarkPlugins={[remarkGfm]}
+        <Paper
+          elevation={6}
           sx={{
-            '& pre': {
-              wordWrap: 'break-word',
-              overflowWrap: 'break-word',
-              whiteSpace: 'normal',
-            },
-          }}
-          components={{
-            code: CodeBlock,
-            p: ({node, ...props}) => (
-              <p
-                style={{
-                  color: '#2DE600',
-                }}
-                {...props}
-              />
-            ),
-            h1: ({node, ...props}) => (
-              <h1
-                style={{
-                  textAlign: 'center',
-                  border: 'none',
-                  color: '#2DE600',
-                }}
-                {...props}
-              />
-            ),
-            h2: ({node, ...props}) => (
-              <h2
-                style={{
-                  border: 'none',
-                  color: '#2DE600',
-                  textAlign: 'center',
-                }}
-                {...props}
-              />
-            ),
-            h3: ({node, ...props}) => (
-              <h3
-                style={{
-                  color: '#2DE600',
-                  borderBottom: '2px solid #2DE600',
-                }}
-                {...props}
-              />
-            ),
-            h4: ({node, ...props}) => (
-              <h4
-                style={{
-                  textAlign: 'center',
-                  color: '#2DE600',
-                }}
-                {...props}
-              />
-            ),
-            hr: ({node, ...props}) => (
-              <hr 
-                style={{
-                  width: 'calc(100% + 32px)',
-                  marginLeft: '-16px',
-                  marginRight: '-16px',
-                  border: 'none',
-                  borderTop: '1px solid #2DE600', // Adjust color as needed
-                }} 
-                {...props} 
-              />
-            )
+            padding: 4,
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(155, 61, 255, 0.3)',
+            borderRadius: 2,
           }}
         >
-          {content}
-        </ReactMarkdown>
+          <Container 
+            className="blog-container"
+            disableGutters
+            maxWidth={false}
+            sx={{
+              '& pre': {
+                wordWrap: 'break-word',
+                overflowWrap: 'break-word',
+                whiteSpace: 'normal',
+              },
+            }}
+          >
+            <ReactMarkdown
+              rehypePlugins={[rehypeRaw]}
+              remarkPlugins={[remarkGfm]}
+              sx={{
+                '& pre': {
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word',
+                  whiteSpace: 'normal',
+                },
+              }}
+              components={{
+                code: CodeBlock,
+                p: ({node, ...props}) => (
+                  <p
+                    style={{
+                      color: '#2DE600',
+                    }}
+                    {...props}
+                  />
+                ),
+                ol: ({ node, ...props }) => (
+                  <ol
+                    style={{
+                      color: '#2DE600',
+                      paddingLeft: '1.2em',
+                      marginBottom: '0.5em',
+                    }}
+                    {...props}
+                  />
+                ),
+
+                li: ({ node, ...props }) => (
+                  <li
+                    style={{
+                      color: '#2DE600',
+                      marginBottom: '0.5em',
+                    }}
+                    {...props}
+                  />
+                ),
+
+                h1: ({node, ...props}) => (
+                  <h1
+                    style={{
+                      textAlign: 'center',
+                      border: 'none',
+                      color: '#2DE600',
+                    }}
+                    {...props}
+                  />
+                ),
+                h2: ({node, ...props}) => (
+                  <h2
+                    style={{
+                      border: 'none',
+                      color: '#2DE600',
+                      textAlign: 'center',
+                    }}
+                    {...props}
+                  />
+                ),
+                h3: ({node, ...props}) => (
+                  <h3
+                    style={{
+                      color: '#2DE600',
+                      borderBottom: '2px solid #2DE600',
+                    }}
+                    {...props}
+                  />
+                ),
+                h4: ({node, ...props}) => (
+                  <h4
+                    style={{
+                      textAlign: 'center',
+                      color: '#2DE600',
+                    }}
+                    {...props}
+                  />
+                ),
+                hr: ({node, ...props}) => (
+                  <hr
+                    style={{
+                      width: 'calc(100% + 32px)',
+                      marginLeft: '-16px',
+                      marginRight: '-16px',
+                      border: 'none',
+                      borderTop: '1px solid #2DE600',
+                    }}
+                    {...props}
+                  />
+                )
+              }}
+            >
+              {content}
+            </ReactMarkdown>
+          </Container>
+        </Paper>
       </Container>
-    </div>
+    </Box>
   );
 }
