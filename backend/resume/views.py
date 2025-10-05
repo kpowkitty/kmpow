@@ -1,14 +1,14 @@
 from rest_framework import viewsets, generics
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from collections import defaultdict
 
-from .models import WorkExperience, Project, Education, SkillCategory, TechCategory, TechTag
+from .models import WorkExperience, Project, Education, TechCategory, TechTag
 from .serializers import (
     WorkExperienceSerializer,
     ProjectSerializer,
     EducationSerializer,
-    SkillCategorySerializer,
     ConsolidatedTechSerializer
 )
 
@@ -28,39 +28,16 @@ class EducationViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = EducationSerializer
     permission_classes = [AllowAny]
 
-class SkillCategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = SkillCategory.objects.all()
-    serializer_class = SkillCategorySerializer
+# Consolidated Tech Stack endpoint
+class ConsolidatedTechList(APIView):
     permission_classes = [AllowAny]
 
-# Consolidated Tech Stack endpoint
-class ConsolidatedTechList(generics.ListAPIView):
-    serializer_class = ConsolidatedTechSerializer
-
-    def get_queryset(self):
+    def get(self, request):
         category_map = defaultdict(set)
-
-        # Database-driven tech tags
         for category in TechCategory.objects.prefetch_related('tech_tags').all():
             for tag in category.tech_tags.all():
                 category_map[category.name].add(tag.name)
 
-        # User-specified tags from SkillCategory
-        for skill_cat in SkillCategory.objects.all():
-            items = [tag.strip() for tag in skill_cat.items.split(',') if tag.strip()]
-            if skill_cat.category:
-                category_map[skill_cat.category].update(items)
-            else:
-                category_map["Uncategorized"].update(items)
-
-        # Convert to list of dicts
-        consolidated = [
-            {"category": cat_name, "tags": sorted(list(tags))}
-            for cat_name, tags in category_map.items()
-        ]
-        return consolidated
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
+        data = [{"category": cat_name, "tags": sorted(list(tags))} for cat_name, tags in category_map.items()]
+        serializer = ConsolidatedTechSerializer(instance=data, many=True)
         return Response(serializer.data)

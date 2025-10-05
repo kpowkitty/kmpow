@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import WorkExperience, Project, Education, SkillCategory, TechTag, TechCategory
+from .models import WorkExperience, Project, Education, TechTag, TechCategory
 
 class TechTagSerializer(serializers.ModelSerializer):
     category = serializers.CharField(source='category.name', default=None)
@@ -33,12 +33,6 @@ class EducationSerializer(serializers.ModelSerializer):
         model = Education
         fields = ['id', 'school', 'degree', 'gpa', 'graduation_date',
                   'additional_info', 'order', 'tech_tags']
-
-
-class SkillCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SkillCategory
-        fields = ['id', 'category', 'items', 'order']
 
 
 class ConsolidatedTechSerializer(serializers.Serializer):

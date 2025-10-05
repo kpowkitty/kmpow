@@ -27,12 +27,12 @@ yarn-error.log*
 backend/kmpow/.env
 backend/kmpow/.venv
 backend/kmpow/__pycache__
-backend/contact/migrations/*
 backend/contact/__pycache__
 backend/db.sqlite3
 backend/db.sqlite3-shm
 backend/db.sqlite3-wal
 backend/static/*
+backend/*/migrations/*
 
 __pycache__/*
 *.py[cod]

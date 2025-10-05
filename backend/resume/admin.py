@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import WorkExperience, Project, Education, SkillCategory
+from .models import WorkExperience, Project, Education, TechTag, TechCategory
 
 
 @admin.register(WorkExperience)
@@ -18,32 +18,34 @@ class WorkExperienceAdmin(admin.ModelAdmin):
             'fields': ('start_date', 'end_date')
         }),
         ('Content', {
-            'fields': ('description', 'links')
+            'fields': ('description', 'links', 'tech_tags')
         }),
         ('Display Order', {
             'fields': ('order',)
         }),
     )
+    filter_horizontal = ('tech_tags',)
 
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'order')
     list_editable = ('order',)
-    search_fields = ('name', 'description', 'tech_stack')
+    search_fields = ('name', 'description')
     ordering = ('order',)
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('name', 'url', 'tech_stack')
+            'fields': ('name', 'url')
         }),
         ('Content', {
-            'fields': ('description',)
+            'fields': ('description', 'tech_tags')
         }),
         ('Display Order', {
             'fields': ('order',)
         }),
     )
+    filter_horizontal = ('tech_tags',)
 
 
 @admin.register(Education)
@@ -66,22 +68,15 @@ class EducationAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(SkillCategory)
-class SkillCategoryAdmin(admin.ModelAdmin):
-    list_display = ('category', 'items', 'order')
+@admin.register(TechCategory)
+class TechCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'order')
     list_editable = ('order',)
-    search_fields = ('category', 'items')
-    ordering = ('order',)
-    
-    fieldsets = (
-        ('Category Information', {
-            'fields': ('category', 'items')
-        }),
-        ('Display Order', {
-            'fields': ('order',)
-        }),
-    )
-    
-    help_texts = {
-        'items': 'Enter items as comma-separated values (e.g., Python, JavaScript, Django)'
-    }
+    search_fields = ('name',)
+
+
+@admin.register(TechTag)
+class TechTagAdmin(admin.ModelAdmin):
+    list_display = ('name', 'category')
+    list_filter = ('category',)
+    search_fields = ('name',)

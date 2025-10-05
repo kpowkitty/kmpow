@@ -2,6 +2,11 @@ from django.db import models
 
 class TechCategory(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    order = models.IntegerField(default=0)
+    
+    class Meta:
+        ordering = ['order']
+        verbose_name_plural = "Tech Categories"
 
     def __str__(self):
         return self.name
@@ -72,17 +77,3 @@ class Education(models.Model):
 
     def __str__(self):
         return f"{self.degree} - {self.school}"
-
-
-class SkillCategory(models.Model):
-    category = models.CharField(max_length=100)
-    items = models.TextField()  # Comma-separated list of user-added tags
-    order = models.IntegerField(default=0)
-
-    class Meta:
-        ordering = ['order']
-        verbose_name_plural = "Skill Categories"
-
-    def __str__(self):
-        return self.category
-
