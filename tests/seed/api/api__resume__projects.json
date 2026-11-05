@@ -1,0 +1,31 @@
+[
+  {
+    "id": 1,
+    "name": "kmpow",
+    "url": "https://example.com/kmpow",
+    "description": "Project with tags.",
+    "order": 0,
+    "tech_tags": [
+      {
+        "id": 1,
+        "name": "Python"
+      },
+      {
+        "id": 6,
+        "name": "Docker"
+      },
+      {
+        "id": 7,
+        "name": "Docker"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Tagless Project",
+    "url": "https://example.com/tagless",
+    "description": "No tags at all.",
+    "order": 1,
+    "tech_tags": []
+  }
+]

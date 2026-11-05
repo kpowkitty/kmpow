@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "school": "Seed University",
+    "degree": "B.S. Computer Science",
+    "gpa": "3.9",
+    "graduation_date": "May 2026",
+    "additional_info": "*Dean's list*",
+    "order": 0,
+    "tech_tags": []
+  },
+  {
+    "id": 2,
+    "school": "Minimal College",
+    "degree": "Certificate",
+    "gpa": null,
+    "graduation_date": "2020",
+    "additional_info": null,
+    "order": 1,
+    "tech_tags": []
+  }
+]

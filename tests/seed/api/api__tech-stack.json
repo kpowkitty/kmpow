@@ -1,0 +1,28 @@
+[
+  {
+    "category": "Language",
+    "tags": [
+      "Python"
+    ]
+  },
+  {
+    "category": "API",
+    "tags": [
+      "GraphQL",
+      "REST"
+    ]
+  },
+  {
+    "category": "Backend",
+    "tags": [
+      "Django",
+      "Docker"
+    ]
+  },
+  {
+    "category": "Tool",
+    "tags": [
+      "Docker"
+    ]
+  }
+]

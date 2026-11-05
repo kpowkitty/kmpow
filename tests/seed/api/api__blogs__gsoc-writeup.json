@@ -1,0 +1,12 @@
+{
+  "id": "star-4",
+  "category": "gsoc",
+  "title": "Google Summer of Code '25 @ FreeBSD Write-Up",
+  "description": "Details of my GSoC project.",
+  "slug": "gsoc-writeup",
+  "position": {
+    "x": 46,
+    "y": 46
+  },
+  "content": "# GSoC\n\nInline `code` and a [link](https://example.com).\n"
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "id": 2,
+    "company": "First Listed Co",
+    "title": "Intern",
+    "subtitle": "Remote",
+    "start_date": "May 2023",
+    "end_date": "Aug 2023",
+    "links": "[repo](https://example.com/repo) [docs](https://example.com/docs)",
+    "description": "- bullet one\n- bullet two with **bold**",
+    "order": 0,
+    "tech_tags": [
+      {
+        "id": 1,
+        "name": "Python"
+      },
+      {
+        "id": 2,
+        "name": "REST"
+      },
+      {
+        "id": 3,
+        "name": "GraphQL"
+      },
+      {
+        "id": 4,
+        "name": "Django"
+      },
+      {
+        "id": 5,
+        "name": "Uncategorized Thing"
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "company": "Second Listed Co",
+    "title": "Engineer",
+    "subtitle": null,
+    "start_date": "Jan 2024",
+    "end_date": "Present",
+    "links": null,
+    "description": "No subtitle, no links, no tags.",
+    "order": 1,
+    "tech_tags": []
+  }
+]

@@ -1,5 +1,5 @@
 # Frontend test image. Built and run by tests/run.py; build context is the repo root.
-ARG NODE_VERSION=20
+ARG NODE_VERSION=23
 FROM node:${NODE_VERSION}-slim
 
 WORKDIR /repo

@@ -6,10 +6,6 @@ URL = '/contact/submit_contact_form/'
 VALID = {'name': 'Seed Person', 'email': 'seed@example.com', 'message': 'Hello!'}
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason='ContactForm.subject is NOT NULL but ContactFormSerializer never accepts it',
-)
 def test_valid_submission_is_saved(api, db):
     res = api.post(URL, VALID, format='json')
     assert res.status_code == 201

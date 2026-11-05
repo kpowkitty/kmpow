@@ -36,3 +36,6 @@ python3 tests/seed_dev.py [component]  # load seed data into a persistent local 
   into Postgres; frontend tests mock `fetch` with `tests/seed/api/`, which are snapshots of the real API
   serving that data.
 - Add a test combination by adding an entry to `CONFIGS` in `tests/config.py`.
+- Backend results print grouped by file as `name : PASS`; add `-- -v` for pytest's default output.
+- Use `yarn add` for frontend dependencies, never `npm install`; the test image installs with
+  `--frozen-lockfile` and fails if `yarn.lock` is out of date.

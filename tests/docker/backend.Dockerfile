@@ -1,10 +1,10 @@
 # Backend test image. Built and run by tests/run.py; build context is the repo root.
-ARG PYTHON_VERSION=3.12
+ARG PYTHON_VERSION=3.11
 FROM python:${PYTHON_VERSION}-slim
 
 # psycopg2 (non-binary) compiles against libpq.
 RUN apt-get update \
- && apt-get install -y --no-install-recommends gcc libpq-dev \
+ && apt-get install -y --no-install-recommends gcc libc6-dev libpq-dev \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /repo

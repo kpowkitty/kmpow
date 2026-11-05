@@ -1,0 +1,12 @@
+{
+  "id": "star-2",
+  "category": "jails",
+  "title": "Jails Part Two",
+  "description": "Second star in the jails constellation.",
+  "slug": "jails-part-two",
+  "position": {
+    "x": 52,
+    "y": 70
+  },
+  "content": "## Part two\n\n| col a | col b |\n|-------|-------|\n| 1     | 2     |\n"
+}

@@ -33,8 +33,25 @@ Read this first in a new session; it captures the state and decisions so far.
   - Claude is blocked from writing `.env*` files by permission rules.
 - **Repo hygiene:** migrations and `yarn.lock` should be committed (removed from `.gitignore`).
 
-## Part 1 (tests) status: written, NOT yet run
-The previous session had no shell, so nothing has been executed. Expect first-run fixes.
+## Part 1 (tests) status: DONE
+`python3 tests/run.py ci` is green: backend 30/30, frontend 10/10.
+
+Environment, pinned to match prod (FreeBSD server):
+- Python 3.11 and Node 23 are the Docker image defaults.
+- `backend/.requirements.txt` is pinned from prod's `pip freeze` (Django 5.1.7, DRF 3.16.0, psycopg2 2.9.10, …).
+- **yarn is the only package manager.** `package-lock.json` is gitignored and deleted. Use `yarn add`, never `npm install`, or `yarn.lock` drifts and the frontend image build fails.
+
+Migrations were **reset**: one fresh `0001_initial.py` per app (blog, about, contact, resume), generated from the current models. Prod's history differs (for example, resume had 0001–0004 on the server, never committed). On the **first deploy**, prod needs this one-time sync:
+1. Back up with `pg_dump`.
+2. Diff prod's schema (`pg_dump --schema-only`) against a test DB built from the new migrations. They must match.
+3. Run `DELETE FROM django_migrations WHERE app IN ('blog','about','contact','resume')`.
+4. Run `manage.py migrate --fake-initial`.
+
+Test output: `tests/reporting.py` prints results grouped by file, at 80 columns: `name : PASS | FAIL | ERROR | SKIPPED | KNOWN BUG | BUG FIXED, REMOVE MARK`. `-v` falls back to pytest's own format.
+
+Server to-do (user): prod's venv contains `sqlite3==0.0.0`, `mysqlite==0.0.0` and `awaiter==0.1.2`. They're unused, and two of them look like possible typosquats. Inspect them with `pip show -f`, then remove them.
+
+Gotcha: if the disk fills during a Docker build, cached layers can end up with 0-byte files, which makes components import as `{}`. Fix it with `docker compose ... build --no-cache`.
 
 Files created or changed:
 ```
@@ -48,14 +65,15 @@ tests/
   run.py           # python3 tests/run.py <config> [-- extra args] | --list ; always `compose down` after
   dockerctl.py     # shared compose() helper; projects kmpow-tests vs kmpow-dev; passes HOST_UID/GID
   seed_dev.py      # starts persistent devdb (profile dev, port DEVDB_PORT=5433) and runs `python -m seed`
-  conftest.py      # --update-snapshots option
+  conftest.py      # --update-snapshots option; loads reporting.py
+  reporting.py     # grouped `name : RESULT` output (off under -v)
   pytest.ini       # pythonpath ../backend + . ; testpaths backend; markers unit/integration/snapshot;
-                   # --strict-markers --import-mode=importlib -p no:cacheprovider
+                   # --strict-markers --import-mode=importlib -p no:cacheprovider; console_output_style=classic
   requirements.txt # pytest==8.3.3, pytest-django==4.9.0
   docker/compose.yml           # db (tmpfs postgres:16), backend, snapshots (backend + rw mount of tests/seed/api),
                                # frontend, devdb (profile dev, named volume). Fake env via YAML anchor.
-  docker/backend.Dockerfile    # python:${PYTHON_VERSION:-3.12}-slim, ENTRYPOINT pytest, WORKDIR /repo/tests
-  docker/frontend.Dockerfile   # node:${NODE_VERSION:-20}-slim, yarn --frozen-lockfile, ENTRYPOINT node jest.js --config tests/frontend/jest.config.js
+  docker/backend.Dockerfile    # python:${PYTHON_VERSION:-3.11}-slim (+gcc libc6-dev libpq-dev), ENTRYPOINT pytest, WORKDIR /repo/tests
+  docker/frontend.Dockerfile   # node:${NODE_VERSION:-23}-slim, yarn --frozen-lockfile, ENTRYPOINT node jest.js --config tests/frontend/jest.config.js
   seed/data/{blogs,about,resume}.json  # edge cases: null position, 0/100 positions, unicode, long title,
                                        # lone category, 3-post constellation, pluralization, uncategorized tag...
   seed/loader.py      # LOADERS registry; idempotent upserts on natural keys; @transaction.atomic load(*components)
@@ -69,17 +87,13 @@ tests/
   frontend/jest.config.js      # plain jest + babel-preset-react-app (runtime automatic); ESM_PACKAGES allowlist
   frontend/support/setup.js, mockApi.js (fetch mock from snapshots), render.js (renderAt + location probe), stubs/
   frontend/FadeAppBar.test.js, BlogAccessories.test.js   # characterization tests
+                               # BlogAccessories: renderPost/click settle the mocked fetches inside act()
 ```
 
-### Waiting on the user
-1. Commit `yarn.lock`.
-2. Commit the real migrations from the production server. The checkout has none for `blog`/`about`, and `contact` has only an empty `migrations/__init__.py`, so its table is never created.
-3. Provide the server's Python/Node versions (and `pip freeze` for pinning `backend/.requirements.txt`). Defaults are 3.12/20.
-4. Run `python3 tests/run.py update-snapshots`, then commit `tests/seed/api/`. The frontend tests and the snapshot test fail until then.
-5. Run `python3 tests/run.py ci` and fix whatever breaks. The likeliest suspect is the Jest ESM allowlist.
-
 ### Bugs found (documented, not fixed)
-- **Contact form:** `ContactForm.subject` is NOT NULL, but `ContactFormSerializer` only accepts name/email/message. The test is marked `xfail(strict=True)`.
+- **Open question:** contact messages have no subject. Django saves the missing `subject` as `''` (not a bug), and `ContactPage.js` never sends one. Decide whether a subject is wanted.
+- **React Router v7 future-flag warnings in tests:** enable `v7_startTransition` and `v7_relativeSplatPath` in the app router and `tests/frontend/support/render.js` together, in the routes part.
+- **Stray props:** `BlogAccessories.js` passes `disableGutters`/`maxWidth` to a `Box` (they're `Container` props), so React warns about an unknown DOM attribute. Check `BlogPage.js:156` too.
 - **Contact page:** status typo `"succes"` and a hardcoded `https://kmpow.com` POST URL in `src/ContactPage.js`.
 - **Galaxy:** `Stars.js` crashes on a blog with `position: null`.
 - **Prop mismatch:** `LoadingStars` passes `starCount`, but `TwinklyStars` expects `count`.
@@ -88,6 +102,8 @@ tests/
 - **Unordered API:** the About and blog list APIs have no explicit ordering; About sorts by `-updated_at` only.
 
 ## Remaining plan (parts 2+)
+**Open decision for Part 3:** the frontend grid needs `grid_col`/`grid_row`, which only arrive with the backend part. Either add a temporary percent→cell adapter or do the backend part first.
+
 **Grid / galaxy (frontend, pure modules first, each with tests in `tests/frontend/`):**
 - `src/lib/random.js`: mulberry32 + `hash2(col, row, seed)`.
 - `src/galaxy/config.js`: `CELL_PX`, `LENS_STRENGTH`, `DENSITY`, `INERTIA`, `KEY_STEP`.
@@ -123,6 +139,6 @@ tests/
 - `public/content/*.md` can go once it's confirmed the DB content matches.
 
 ## Verification
-- `python3 tests/run.py ci` is green (with only the contact xfail).
+- `python3 tests/run.py ci` is green.
 - `python3 tests/seed_dev.py` run twice: the second run changes nothing.
 - Manual check: resizing doesn't reshuffle stars, and panning wraps endlessly with lines staying attached across the seam. Center-of-screen styling should be identical to before.

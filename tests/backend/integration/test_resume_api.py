@@ -3,13 +3,17 @@ import pytest
 pytestmark = pytest.mark.integration
 
 
-@pytest.mark.parametrize('path, field, expected', [
-    ('/api/resume/work-experience/', 'company', ['First Listed Co', 'Second Listed Co']),
-    ('/api/resume/projects/', 'name', ['kmpow', 'Tagless Project']),
-    ('/api/resume/education/', 'school', ['Seed University', 'Minimal College']),
-])
-def test_items_are_sorted_by_order(api, seeded, path, field, expected):
-    res = api.get(path)
+SORTED_SECTIONS = {
+    'work-experience': ('company', ['First Listed Co', 'Second Listed Co']),
+    'projects': ('name', ['kmpow', 'Tagless Project']),
+    'education': ('school', ['Seed University', 'Minimal College']),
+}
+
+
+@pytest.mark.parametrize('section', SORTED_SECTIONS)
+def test_items_are_sorted_by_order(api, seeded, section):
+    field, expected = SORTED_SECTIONS[section]
+    res = api.get(f'/api/resume/{section}/')
     assert res.status_code == 200
     assert [item[field] for item in res.json()] == expected
 

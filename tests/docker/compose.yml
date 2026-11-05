@@ -39,7 +39,7 @@ services:
       context: ../..
       dockerfile: tests/docker/backend.Dockerfile
       args:
-        PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.11}
     environment: *backend-env
     depends_on:
       db:
@@ -57,7 +57,7 @@ services:
       context: ../..
       dockerfile: tests/docker/frontend.Dockerfile
       args:
-        NODE_VERSION: ${NODE_VERSION:-20}
+        NODE_VERSION: ${NODE_VERSION:-23}
 
   # Persistent dev database for seed data. Only started with the "dev" profile.
   devdb:

@@ -1,0 +1,12 @@
+{
+  "id": "star-1",
+  "category": "jails",
+  "title": "Kyua Testing in a FreeBSD UFS Jail",
+  "description": "Setting up a UFS jail for Kyua tests.",
+  "slug": "kyua-test",
+  "position": {
+    "x": 40,
+    "y": 63
+  },
+  "content": "# Kyua in a Jail\n#### By Seed Data\n---\n\n### Introduction\n\nPlain paragraph.\n\n```sh\nexport FOO=bar\necho \"$FOO\" # comment\n```\n\n1. first\n2. second\n"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "star-6",
+  "category": "storybook",
+  "title": "Storybook: A Two Part Tale",
+  "description": "A lone star: its category has no other posts, so no constellation lines.",
+  "slug": "storybook",
+  "position": {
+    "x": 100,
+    "y": 100
+  },
+  "content": "# Storybook\n\nSingle post in its category.\n"
+}
