@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Older About (should never be shown)",
+    "section_1": "Stale first section.",
+    "section_2": "Stale second section.",
+    "section_3": "Stale third section."
+  },
+  {
+    "title": "About Me",
+    "section_1": "Current first section with a fairly long paragraph so the layout wraps across several lines on a narrow screen and we can see the line height and spacing behave.",
+    "section_2": null,
+    "section_3": null
+  }
+]

@@ -1,0 +1,78 @@
+{
+  "tech_categories": [
+    {"name": "Language", "order": 0},
+    {"name": "API", "order": 1},
+    {"name": "Backend", "order": 2},
+    {"name": "Tool", "order": 3}
+  ],
+  "work_experience": [
+    {
+      "company": "Second Listed Co",
+      "title": "Engineer",
+      "subtitle": null,
+      "start_date": "Jan 2024",
+      "end_date": "Present",
+      "links": null,
+      "description": "No subtitle, no links, no tags.",
+      "order": 1,
+      "tech_tags": []
+    },
+    {
+      "company": "First Listed Co",
+      "title": "Intern",
+      "subtitle": "Remote",
+      "start_date": "May 2023",
+      "end_date": "Aug 2023",
+      "links": "[repo](https://example.com/repo) [docs](https://example.com/docs)",
+      "description": "- bullet one\n- bullet two with **bold**",
+      "order": 0,
+      "tech_tags": [
+        {"name": "Python", "category": "Language"},
+        {"name": "REST", "category": "API"},
+        {"name": "GraphQL", "category": "API"},
+        {"name": "Django", "category": "Backend"},
+        {"name": "Uncategorized Thing", "category": null}
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "kmpow",
+      "url": "https://example.com/kmpow",
+      "description": "Project with tags.",
+      "order": 0,
+      "tech_tags": [
+        {"name": "Python", "category": "Language"},
+        {"name": "Docker", "category": "Tool"},
+        {"name": "Docker", "category": "Backend"}
+      ]
+    },
+    {
+      "name": "Tagless Project",
+      "url": "https://example.com/tagless",
+      "description": "No tags at all.",
+      "order": 1,
+      "tech_tags": []
+    }
+  ],
+  "education": [
+    {
+      "school": "Seed University",
+      "degree": "B.S. Computer Science",
+      "gpa": "3.9",
+      "graduation_date": "May 2026",
+      "additional_info": "*Dean's list*",
+      "order": 0,
+      "tech_tags": []
+    },
+    {
+      "school": "Minimal College",
+      "degree": "Certificate",
+      "gpa": null,
+      "graduation_date": "2020",
+      "additional_info": null,
+      "order": 1,
+      "tech_tags": []
+    }
+  ]
+}

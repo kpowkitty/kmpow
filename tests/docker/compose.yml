@@ -1,0 +1,72 @@
+# Test/dev containers. Drive this through tests/run.py rather than by hand.
+name: kmpow-tests
+
+x-backend-env: &backend-env
+  DJANGO_SETTINGS_MODULE: kmpow.settings
+  SECRET_KEY: insecure-test-key-not-a-secret
+  ALLOWED_HOSTS: testserver:localhost
+  DB_NAME: kmpow
+  DB_USER: postgres
+  DB_PASSWORD: postgres
+  DB_HOST: db
+  DB_PORT: "5432"
+  EMAIL_HOST: localhost
+  EMAIL_PORT: "25"
+  EMAIL_HOST_USER: test@example.com
+  EMAIL_HOST_PASSWORD: unused
+
+x-postgres: &postgres
+  image: postgres:16-alpine
+  environment:
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+    POSTGRES_DB: kmpow
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U postgres -d kmpow"]
+    interval: 2s
+    timeout: 3s
+    retries: 15
+
+services:
+  # Ephemeral: data lives in RAM and vanishes with the container.
+  db:
+    <<: *postgres
+    tmpfs:
+      - /var/lib/postgresql/data
+
+  backend: &backend
+    build:
+      context: ../..
+      dockerfile: tests/docker/backend.Dockerfile
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.12}
+    environment: *backend-env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Backend with write access to tests/seed/api only, for regenerating snapshots.
+  snapshots:
+    <<: *backend
+    user: "${HOST_UID:-0}:${HOST_GID:-0}"
+    volumes:
+      - ../seed/api:/repo/tests/seed/api
+
+  frontend:
+    build:
+      context: ../..
+      dockerfile: tests/docker/frontend.Dockerfile
+      args:
+        NODE_VERSION: ${NODE_VERSION:-20}
+
+  # Persistent dev database for seed data. Only started with the "dev" profile.
+  devdb:
+    <<: *postgres
+    profiles: ["dev"]
+    ports:
+      - "${DEVDB_PORT:-5433}:5432"
+    volumes:
+      - devdb-data:/var/lib/postgresql/data
+
+volumes:
+  devdb-data:

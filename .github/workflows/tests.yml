@@ -1,0 +1,32 @@
+name: tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  configs:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.read.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: read
+        run: |
+          echo "matrix=$(cd tests && python3 -c 'import json, config; print(json.dumps(list(config.CI_CONFIGS)))')" >> "$GITHUB_OUTPUT"
+
+  test:
+    needs: configs
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ${{ fromJSON(needs.configs.outputs.matrix) }}
+    name: ${{ matrix.config }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tests/run.py ${{ matrix.config }}
