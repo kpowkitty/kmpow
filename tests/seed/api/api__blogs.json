@@ -1,5 +1,38 @@
 [
   {
+    "id": "star-7",
+    "category": "edge-cases",
+    "title": "An Extremely Long Title That Keeps Going To Test Tooltip Wrapping And Overflow Behaviour On Small Screens And Everywhere Else",
+    "description": "Long title, no position yet.",
+    "slug": "long-title-no-position",
+    "position": null,
+    "content": "Post with no position assigned.\n"
+  },
+  {
+    "id": "star-5",
+    "category": "gsoc",
+    "title": "GSoC Follow-up: ünïcödé ✨ and emoji 🚀",
+    "description": "",
+    "slug": "gsoc-follow-up",
+    "position": {
+      "x": 0,
+      "y": 0
+    },
+    "content": "Unicode body: café, naïve, 日本語, 🚀\n"
+  },
+  {
+    "id": "star-4",
+    "category": "gsoc",
+    "title": "Google Summer of Code '25 @ FreeBSD Write-Up",
+    "description": "Details of my GSoC project.",
+    "slug": "gsoc-writeup",
+    "position": {
+      "x": 46,
+      "y": 46
+    },
+    "content": "# GSoC\n\nInline `code` and a [link](https://example.com).\n"
+  },
+  {
     "id": "star-1",
     "category": "jails",
     "title": "Kyua Testing in a FreeBSD UFS Jail",
@@ -36,30 +69,6 @@
     "content": "### Part three\n\n<div align=\"center\"><b>raw html</b></div>\n\nanunbrokenlinethatgoesonandonandonandonandonandonandonandonandonandonandonandonandonandonandonandonandonandonandon\n"
   },
   {
-    "id": "star-4",
-    "category": "gsoc",
-    "title": "Google Summer of Code '25 @ FreeBSD Write-Up",
-    "description": "Details of my GSoC project.",
-    "slug": "gsoc-writeup",
-    "position": {
-      "x": 46,
-      "y": 46
-    },
-    "content": "# GSoC\n\nInline `code` and a [link](https://example.com).\n"
-  },
-  {
-    "id": "star-5",
-    "category": "gsoc",
-    "title": "GSoC Follow-up: ünïcödé ✨ and emoji 🚀",
-    "description": "",
-    "slug": "gsoc-follow-up",
-    "position": {
-      "x": 0,
-      "y": 0
-    },
-    "content": "Unicode body: café, naïve, 日本語, 🚀\n"
-  },
-  {
     "id": "star-6",
     "category": "storybook",
     "title": "Storybook: A Two Part Tale",
@@ -70,14 +79,5 @@
       "y": 100
     },
     "content": "# Storybook\n\nSingle post in its category.\n"
-  },
-  {
-    "id": "star-7",
-    "category": "edge-cases",
-    "title": "An Extremely Long Title That Keeps Going To Test Tooltip Wrapping And Overflow Behaviour On Small Screens And Everywhere Else",
-    "description": "Long title, no position yet.",
-    "slug": "long-title-no-position",
-    "position": null,
-    "content": "Post with no position assigned.\n"
   }
 ]

@@ -13,5 +13,9 @@ COPY src src
 COPY public public
 COPY tests tests
 
+# Shader JS is generated, not committed.
+COPY scripts scripts
+RUN node scripts/shaders.mjs
+
 # Arguments come from the selected config.
 ENTRYPOINT ["node", "node_modules/jest/bin/jest.js", "--config", "tests/frontend/jest.config.js"]

@@ -9,6 +9,10 @@ class Blog(models.Model):
     slug = models.SlugField(unique=True)
     position = models.JSONField(encoder=DjangoJSONEncoder, null=True, blank=True)  # {"x": 40, "y": 63}
     content = models.TextField()
+    order = models.IntegerField(default=0)  # position within its category's constellation
+
+    class Meta:
+        ordering = ['category', 'order', 'slug']
 
     def __str__(self):
         return f"{self.title} ({self.category})"

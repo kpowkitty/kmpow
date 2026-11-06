@@ -5,6 +5,7 @@
     "title": "Kyua Testing in a FreeBSD UFS Jail",
     "description": "Setting up a UFS jail for Kyua tests.",
     "slug": "kyua-test",
+    "order": 1,
     "position": {"x": 40, "y": 63},
     "content": "# Kyua in a Jail\n#### By Seed Data\n---\n\n### Introduction\n\nPlain paragraph.\n\n```sh\nexport FOO=bar\necho \"$FOO\" # comment\n```\n\n1. first\n2. second\n"
   },
@@ -14,6 +15,7 @@
     "title": "Jails Part Two",
     "description": "Second star in the jails constellation.",
     "slug": "jails-part-two",
+    "order": 2,
     "position": {"x": 52, "y": 70},
     "content": "## Part two\n\n| col a | col b |\n|-------|-------|\n| 1     | 2     |\n"
   },
@@ -23,6 +25,7 @@
     "title": "Jails Part Three",
     "description": "Third star in the jails constellation.",
     "slug": "jails-part-three",
+    "order": 3,
     "position": {"x": 60, "y": 58},
     "content": "### Part three\n\n<div align=\"center\"><b>raw html</b></div>\n\nanunbrokenlinethatgoesonandonandonandonandonandonandonandonandonandonandonandonandonandonandonandonandonandonandon\n"
   },

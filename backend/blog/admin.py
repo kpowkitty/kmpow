@@ -13,7 +13,7 @@ class BlogAdminForm(forms.ModelForm):
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
     form = BlogAdminForm
-    list_display = ('id', 'title', 'category', 'slug', 'position')
+    list_display = ('id', 'title', 'category', 'order', 'slug', 'position')
     search_fields = ('title', 'category', 'slug')
     list_filter = ('category',)
 
