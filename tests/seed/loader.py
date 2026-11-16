@@ -22,10 +22,23 @@ def upsert(model, row, keys):
 
 
 def load_blogs(rows):
+    """Through the galaxy service, like admin: new posts join the end of their category in file order."""
+    from blog import galaxy
     from blog.models import Blog
 
     for row in rows:
-        upsert(Blog, row, ('id',))
+        row = dict(row)
+        category = row.pop('category')
+        post = Blog.objects.filter(pk=row['id']).first()
+        if post is None:
+            galaxy.add(Blog(category=category, **row))
+            continue
+        content = {field: value for field, value in row.items() if field != 'id'}
+        for field, value in content.items():
+            setattr(post, field, value)
+        post.save(update_fields=list(content))
+        if post.category != category:
+            galaxy.change_category(post, category)
 
 
 def load_about(rows):

@@ -1,0 +1,28 @@
+{% extends "admin/base_site.html" %}
+{% load admin_urls %}
+
+{% block content %}
+<p>New rules are saved only if every existing star still fits them.</p>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Preview">
+</form>
+
+{% if problems %}
+  <p class="errornote">This can't be done:</p>
+  <ul>{% for problem in problems %}<li>{{ problem }}</li>{% endfor %}</ul>
+{% elif changes is not None %}
+  <p>These changes will happen:</p>
+  <ul>{% for change in changes %}<li>{{ change }}</li>{% empty %}<li>Nothing changes.</li>{% endfor %}</ul>
+  {% if changes %}
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}<input type="hidden" name="{{ field.html_name }}" value="{{ field.value }}">{% endfor %}
+      <input type="hidden" name="confirm" value="yes">
+      <input type="submit" value="Confirm">
+    </form>
+  {% endif %}
+{% endif %}
+<p><a href="{% url opts|admin_urlname:'changelist' %}">Cancel</a></p>
+{% endblock %}

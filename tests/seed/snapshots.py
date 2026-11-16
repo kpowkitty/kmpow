@@ -19,6 +19,7 @@ def snapshot_urls():
     return [
         '/api/blogs/',
         *(f"/api/blogs/{row['slug']}/" for row in read('blogs')),
+        '/api/galaxy/',
         '/api/about/',
         '/api/resume/work-experience/',
         '/api/resume/projects/',

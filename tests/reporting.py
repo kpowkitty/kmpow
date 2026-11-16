@@ -28,11 +28,13 @@ def fit(text, width):
 def split_nodeid(nodeid):
     path, _, test = nodeid.partition('::')
     module = path.rsplit('/', 1)[-1].removesuffix('.py').removeprefix('test_')
-    func, _, param = test.partition('[')
+    test, _, param = test.partition('[')
+    *classes, func = test.split('::')
+    group = ' :: '.join([module, *(c.removeprefix('Test') for c in classes)])
     func = func.removeprefix('test_')
     if param:
-        return f'{module} :: {func}', param.removesuffix(']')
-    return module, func
+        return f'{group} :: {func}', param.removesuffix(']')
+    return group, func
 
 
 def is_strict_xpass(report):

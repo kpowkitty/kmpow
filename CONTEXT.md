@@ -15,7 +15,8 @@ Read this first in a new session; it captures the state and decisions so far.
 - Everything must be **composable, configurable and idempotent**.
 - **DO NOT change any visual styling.** Every color, size, shadow and animation stays identical; styling will be discussed separately later. Exception: the galaxy is being redrawn in WebGL, so there it must *look* the same, checked side by side against the old DOM version.
 - Keep comments minimal. The user trimmed docstrings and comments, so match the sparse style.
-- Do the work in parts, in this order: **1. tests → 2. grid → 3. stars → 4. backend → 5. routes → …** Pause after each part so the user can run it.
+- Do the work in parts, in this order: **1. tests → 2. grid → 3. backend → 4. stars (WebGL) → 5. routes → …** (backend and stars were swapped on 2026-11-06). Pause after each part so the user can run it.
+- **Fix the root cause; never monkey patch** downstream (for example, the frontend never re-sorts API data; the backend owns ordering).
 
 ## Decisions already made (don't re-ask)
 - **Galaxy:** an endless wrapping grid (a torus of cells) plus a spherical "globe lens": stars toward the edges shrink, dim and curve "up and out". Panning is X/Y only, with no Z travel and no zoom.
@@ -31,7 +32,7 @@ Read this first in a new session; it captures the state and decisions so far.
   - **Hot swapping (Part 3 requirement).** The galaxy is the site's main component and will need a lot of visual tuning. The renderer must `module.hot.accept` the shader modules and `config.js`, and rebuild only the WebGL program and uniforms in place: keep the camera, the stars and the page, with no full reload. `module.hot` is absent in production builds.
   - **Accessibility and fallback.** A visually hidden `<nav>` lists a real link to every post. Without WebGL, that list (styled) is what's shown.
   - **Pure modules stay pure and tested in Jest.** Rendering is checked by eye or screenshots.
-- **Blog posts come from Django admin only.** New posts get a grid cell automatically on save. `src/scripts/addStar.js`, `clearJson.js` and `src/static/stars.json` are dead code to delete.
+- **Blog posts come from Django admin only.** New posts get a grid cell automatically, through the layout service (see Backend). `src/scripts/addStar.js`, `clearJson.js` and `src/static/stars.json` are dead code to delete.
 - **Tests:**
   - All tests live in root `tests/`, not next to the code they test.
   - Backend tests use **pytest + pytest-django**.
@@ -56,7 +57,8 @@ Migrations were **reset**: one fresh `0001_initial.py` per app (blog, about, con
 1. Back up with `pg_dump`.
 2. Diff prod's schema (`pg_dump --schema-only`) against a test DB built from **only the `0001_initial` migrations** (`migrate <app> 0001` per app); later migrations like `blog/0002_blog_order` add things prod doesn't have yet. They must match.
 3. Run `DELETE FROM django_migrations WHERE app IN ('blog','about','contact','resume')`.
-4. Run `manage.py migrate --fake-initial`. This marks the `0001`s as applied without running them, then really runs everything after (e.g. adds `blog.order`, default 0).
+4. Run `manage.py migrate --fake-initial`. This marks the `0001`s as applied without running them, then really runs everything after: it adds `blog.order` (default 0), the Galaxy/Region tables and cells, and creates the Galaxy row.
+5. Run `manage.py place_stars --reset` once. It places every existing post fresh (the percent positions are dropped), prints the change list, and fails if the layout isn't valid. Every later deploy runs plain `manage.py place_stars` as a safety net; normally it prints "nothing to place".
 
 Test output: `tests/reporting.py` prints results grouped by file, at 80 columns: `name : PASS | FAIL | ERROR | SKIPPED | KNOWN BUG | BUG FIXED, REMOVE MARK`. `-v` falls back to pytest's own format.
 
@@ -114,7 +116,7 @@ tests/
 - **Unordered API:** the About list API sorts by `-updated_at` only (ties unordered). The blog list is fixed (see `order` above).
 
 ## Remaining plan (parts 2+)
-**Open decision for Part 3:** the frontend grid needs `grid_col`/`grid_row`, which only arrive with the backend part. Either add a temporary percent→cell adapter or do the backend part first.
+**Order change (decided 2026-11-06):** the backend comes **before** Part 3 rendering. A temporary percent→cell adapter would be a monkey patch.
 
 **Grid / galaxy (frontend, pure modules first, each with tests in `tests/frontend/`):**
 - DONE `src/lib/random.js`: mulberry32 + `hash2(col, row, seed)`.
@@ -136,16 +138,88 @@ tests/
   - Data is fetched once, and a resize only resizes the canvas.
   - **Fetch the blog list once for the whole app** (a small shared store or React context) and build `buildConstellations` from it once. Today `BlogAccessories` refetches every post on each post page just to find next/back. The galaxy, the lines and the arrows all read the same object. `BlogAccessories` switches to `neighbors` and drops its own sort.
   - WebGL library: not chosen yet (OGL recommended; three.js or react-three-fiber are the alternatives).
+  - **Background stars are generated in the shader** from `hash2(col, row, seed)`, per cell, so a growing galaxy costs nothing at load. `background.js` stays as the tested JS reference, and its math moves to a `.glsl` file through the shader pipeline (one copy).
+  - **Lines are drawn in short pieces, each lensed,** so they bend with the globe. Straight lines between lensed endpoints could cross near the screen edges even though they don't in the galaxy.
 
-**Backend:**
-- `Blog` model: replace `position` JSON with `grid_col`/`grid_row` (nullable, unique together). (`order` is already done.) `save()` auto-assigns a cell if it's empty and never moves an existing one.
-- `blog/placement.py`: pure `assign_cell` that spirals out from the category centroid (or `hash(category)`), honoring `MIN_GAP`.
-- `settings.GALAXY = {cols, rows, seed}`.
-- Data migration from percent positions to cells, centered on the origin.
-- `GET /api/galaxy/` returns `{cols, rows, seed, stars:[...]}` without content. The list serializer drops `content`.
-- Admin: show and edit `order`, plus a "re-place" action.
-- `manage.py place_stars [--reset]`, idempotent.
+**Backend (done before Part 3 rendering; decided 2026-11-06):**
+
+*Layout model: boxes.*
+- The galaxy is a grid of **boxes**, each `box_cells` × `box_cells` cells (8×8 = 960 px). It's always a whole number of boxes, and regions never straddle the seam. It grows by adding a row or column of boxes and never shrinks on its own.
+- **One `Galaxy` row holds everything layout-related**: size (`box_cols`, `box_rows`), `seed`, the rules (`box_cells`, `box_margin`, `min_gap`, `line_length`, `line_variety`, `line_clearance`), and `origin_col`/`origin_row` (where the camera starts). It's the **only source**: no settings and no frontend copy. The API serves it to JS. The initial values come from the migration that creates the row: 4×4 boxes, 8, 1, 2, 3, 0.5, 1. DB check constraints guard the values. The frontend's `DEFAULT_GALAXY` gets removed.
+- **Each category owns one stored `Region`** of boxes (1×1, 2×1, 2×2, … Lego-style), assigned when the category gets its first post and freed when it has none left. Constellations can never overlap, because lines stay inside their own convex rectangle.
+- `box_margin` 1: stars keep 1 cell inside their region's outer edge, so stars in neighboring regions are always 3 or more cells apart.
+- **One category = one constellation.** Lines join consecutive posts in `order`, which is renumbered 1…n after every operation.
+- **The seam can move.** On a torus, the seam is just where coordinates start. When a region on the seam needs room, the service rotates every star, region and the origin by whole boxes so the seam sits on a free border (no visible change). If no border is free, it adds a line of boxes there. Edge constellations then grow in every direction like middle ones.
+
+*Rules (all in the `Galaxy` row):*
+- Stars are at least `min_gap` (2) cells apart.
+- **Line lengths are never fixed.** Any valid cell in the region can be picked, weighted by how natural its line length is: a log-scale curve peaking at a typical length, trailing off toward long lines, divided by length so the larger number of far cells doesn't bias toward long lines. **Each category has its own character:** a typical length of `line_length × e^(±line_variety)`, seeded by the category name. At 3 and 0.5 that's about 1.8–4.9 cells, so some constellations are tight and others sprawl.
+- A new star's lines don't cross its constellation's lines and stay `line_clearance` (1) clear of its stars.
+- **Lines within one constellation may cross after a removal** (decided; accepted). `validate()` checks only the invariants: regions fit and don't overlap, every star is inside its region's interior, and stars respect `min_gap`.
+
+*Placement (pure, deterministic: seeded by galaxy seed + slug; draw order by weighted-random keys):*
+- **Adding a post:** it joins the **end** of its constellation.
+  - **Escape rule (strict pass):** the new star must still be able to draw a valid line to a cell outside the constellation's outline (convex hull), in any direction. Without it, 72% of 40-star constellations sealed their newest star into a pocket of their own lines; with it, about 1 in 200 does. Measured on 2026-11-06. Among escaping cells, ones that also leave room inside the region win.
+  - **Order:** the region → re-anchor if on the seam → grow into free neighbors → move as a unit to a free spot one box bigger, with the constellation on either side of it (nearest 8 spots per size) → grow the galaxy if there's no spot at all. That's the strict pass. The same order runs again non-strict as a last resort, then a clear error: "X is stuck behind its own lines; re-place Y (its last star) and try again".
+  - Moves and growth are reported in the change list, shown before saving.
+- **New categories** take the free box farthest from all others (Chebyshev, then Manhattan to break ties), or grow the galaxy if none is free.
+- **Removing a post** works like a linked list: `A → B → C` becomes `A → C` with **zero updates**. No star moves and nothing is checked.
+- **Move earlier/later, change category:** list operations. The star **keeps its cell if it's still valid** in the new spot, and is re-placed otherwise. These are idempotent (repeating one is a no-op) and deterministic (same state + same operation = same result). There's no stored "home cell"; an exact undo isn't guaranteed if a re-place happened. Inserting in the middle weights both new lines and never grows anything: no room between two fixed neighbors is an error.
+- **Re-place star:** a different valid cell in the same region, or an error. It never grows anything.
+- **Change rules:** saved only if `validate()` passes under the new values. A value the database rejects becomes the same clear error.
+- `add()` refuses a post that's already in the galaxy.
+
+*One way to change the layout:*
+- `blog/galaxy.py` is the **only** code that changes layout fields (`grid_col`, `grid_row`, `order`, `category`) or the `Galaxy` size. Each operation builds the new layout in memory, places, validates, and saves in one transaction, or changes nothing and raises a clear message.
+- **Admin:**
+  - the layout fields are read-only;
+  - explicit actions: Move earlier, Move later, Change category…, Re-place star, Remove from galaxy (replaces stock delete);
+  - the add form has no cell or order fields.
+- **Everything else is blocked:** `Blog.save()` refuses layout-field changes that don't come from the service, and the model's queryset blocks bulk `update()`/`delete()` on them.
+- **Backstop:** `manage.py check_galaxy` reports any invalid layout (raw SQL can't be blocked) and prints each category's rectangle. A test asserts the seed data is valid.
+
+*Modules (pure first, each unit-tested; the pure ones take the `Galaxy` model itself, and tests use `tests/stubs.py`):*
+- DONE `blog/geometry.py`: exact integer segment crossing, point-to-segment distance, convex hull, outside-hull.
+- DONE `blog/boxes.py`: `Region` value type for hypothetical regions, interiors, grow options, `free_spots`/`nearest_free`, `farthest_free_box`, `grown_size`, `validate_regions`, `touches_seam`, `best_seam`.
+- DONE `blog/placement.py`: `typical_length`, `length_weight`, `is_valid`, `can_escape`, `place(..., exclude, strict)`.
+- DONE `blog/models.py` + `0003_galaxy_regions_cells`: `Galaxy`, `Region`, `Blog.grid_col/grid_row`. The one-star-per-cell constraint is **deferred** (checked at commit), so moving or rotating a constellation can pass through overlapping cells mid-transaction. `position` stays until the WebGL galaxy replaces `Stars.js`.
+- DONE `blog/galaxy.py`: the service (`add`, `remove`, `move`, `move_earlier`, `move_later`, `change_category`, `replace`, `change_rules`, `validate`). Integration tests are in `tests/backend/integration/test_galaxy_service.py`.
+- DONE **Guards:** `blog/writes.py` holds the writing flag (`layout_writes()`, `is_writing()`, `LayoutLocked`), so models and service don't import each other.
+  - `Galaxy` and `Region`: every save, delete and bulk write is locked.
+  - `Blog`: creating, deleting, and changing `grid_col`/`grid_row`/`order`/`category` (save, `update`, `bulk_update`) are locked. Content edits work anywhere. The check compares against values remembered from the database read, so it costs no extra query.
+  - Tests that check database constraints open `layout_writes()` themselves. Snapshot tests use `serialized_rollback=True`, so the migration-created Galaxy row survives their database wipe.
+- DONE `0004_galaxy_initial`: creates the Galaxy row with the starting values.
+- DONE **Seed loader goes through the service:** new posts use `galaxy.add()` in file order, a changed category uses `change_category()`, and content is upserted. `order` is no longer in `blogs.json`.
+- DONE **`manage.py place_stars [--reset]`** instead of a data migration. Migrations must use frozen historical models, and calling the service, which uses the current models, from a migration would break on fresh databases once the models change. The command calls `galaxy.place_unplaced()` / `galaxy.reset()`, then `validate()`, and fails if the layout is invalid. `grid_col`/`grid_row` stay nullable: unplaced is legitimate between migrating and running the command, and the API must skip unplaced posts.
+- DONE **API:**
+  - `GET /api/galaxy/` returns the Galaxy row under its model field names, plus `stars` (placed posts only, in constellation order, no content: id, slug, title, description, category, order, grid_col, grid_row) and `regions`.
+  - `/api/blogs/` (the list) has no `content`; the detail endpoint keeps it. `position` stays in both until `Stars.js` is replaced.
+  - Snapshot: `tests/seed/api/api__galaxy.json`.
+- DONE **Admin step 1 (posts):**
+  - adding calls `galaxy.add()` and shows the change list as messages;
+  - the add form has no cell or order fields;
+  - `id` and `category` become read-only after creation (editing the primary key would create a copy);
+  - order, cell and position are always read-only;
+  - stock Delete (single and bulk) goes through `galaxy.remove()`.
+
+- DONE **Admin step 2 (layout actions):**
+  - `galaxy.preview(operation, *args)` runs any service operation in an always-rolled-back transaction, so previews are exactly what Confirm does.
+  - List actions Move earlier, Move later and Re-place star go through a preview page (`admin/blog/confirm_layout.html`), then Confirm.
+  - A "Change category…" button on the post page opens `<pk>/change-category/` (Preview → Confirm).
+  - The add form previews the placement in `clean()`, so a `LayoutError` is a form error.
+  - `manage.py check` is clean.
+- DONE **Admin step 3:**
+  - `Region` admin is read-only and lists star counts.
+  - `Galaxy` admin is read-only, with a "Change rules…" page that previews and then confirms. Its form is built from the model fields, so database limits show up as form errors.
+  - `manage.py check_galaxy` (read-only) prints the galaxy and regions, and fails on any invariant violation.
+- NEXT: the backend part is functionally complete. Remaining: resume ordering ties (unique tie-break + migration + snapshots), then Part 4 (WebGL).
+
+*Also:*
+- `Blog`: replace `position` JSON with `grid_col`/`grid_row` (unique together).
+- `GET /api/galaxy/` returns `{cols, rows, seed, stars: [...]}` without content; the list serializer drops `content`.
+- **Existing posts (decided):** `place_stars --reset` places every existing post fresh with the algorithm, in its current order; the percent positions are dropped. The starting size, 4×4 boxes (32×32 cells), comes from `0004_galaxy_initial`.
 - Update the seed data and snapshots to match.
+- **Resume ties:** add a unique tie-break to resume `Meta.ordering`, with a migration and snapshots.
 
 **Cleanup / dedupe (logic only, styles identical):**
 - `src/theme/tokens.js` (verbatim colors) and `src/theme/animations.css` (twinkle/shimmer, defined once).

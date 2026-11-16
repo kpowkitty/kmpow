@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+{% load admin_urls %}
+
+{% block content %}
+{% if problems %}
+  <p class="errornote">This can't be done:</p>
+  <ul>{% for problem in problems %}<li>{{ problem }}</li>{% endfor %}</ul>
+{% else %}
+  <p>These changes will happen:</p>
+  <ul>{% for change in changes %}<li>{{ change }}</li>{% empty %}<li>Nothing changes.</li>{% endfor %}</ul>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="{{ action }}">
+    {% for pk in selected %}<input type="hidden" name="_selected_action" value="{{ pk }}">{% endfor %}
+    <input type="hidden" name="confirm" value="yes">
+    <input type="submit" value="Confirm">
+  </form>
+{% endif %}
+<p><a href="{% url opts|admin_urlname:'changelist' %}">Cancel</a></p>
+{% endblock %}

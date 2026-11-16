@@ -1,0 +1,27 @@
+{% extends "admin/base_site.html" %}
+{% load admin_urls %}
+
+{% block content %}
+<p>Currently in <strong>{{ post.category }}</strong>. It will join the end of the new category's constellation.</p>
+<form method="post">
+  {% csrf_token %}
+  <input type="text" name="category" value="{{ category }}" list="categories" required>
+  <datalist id="categories">{% for name in categories %}<option value="{{ name }}">{% endfor %}</datalist>
+  <input type="submit" value="Preview">
+</form>
+
+{% if problems %}
+  <p class="errornote">This can't be done:</p>
+  <ul>{% for problem in problems %}<li>{{ problem }}</li>{% endfor %}</ul>
+{% elif changes is not None %}
+  <p>These changes will happen:</p>
+  <ul>{% for change in changes %}<li>{{ change }}</li>{% empty %}<li>Nothing changes.</li>{% endfor %}</ul>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="category" value="{{ category }}">
+    <input type="hidden" name="confirm" value="yes">
+    <input type="submit" value="Confirm">
+  </form>
+{% endif %}
+<p><a href="{% url opts|admin_urlname:'change' post.pk|admin_urlquote %}">Cancel</a></p>
+{% endblock %}

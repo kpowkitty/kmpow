@@ -1,0 +1,115 @@
+{
+  "stars": [
+    {
+      "id": "star-7",
+      "slug": "long-title-no-position",
+      "title": "An Extremely Long Title That Keeps Going To Test Tooltip Wrapping And Overflow Behaviour On Small Screens And Everywhere Else",
+      "description": "Long title, no position yet.",
+      "category": "edge-cases",
+      "order": 1,
+      "grid_col": 4,
+      "grid_row": 19
+    },
+    {
+      "id": "star-4",
+      "slug": "gsoc-writeup",
+      "title": "Google Summer of Code '25 @ FreeBSD Write-Up",
+      "description": "Details of my GSoC project.",
+      "category": "gsoc",
+      "order": 1,
+      "grid_col": 17,
+      "grid_row": 21
+    },
+    {
+      "id": "star-5",
+      "slug": "gsoc-follow-up",
+      "title": "GSoC Follow-up: ünïcödé ✨ and emoji 🚀",
+      "description": "",
+      "category": "gsoc",
+      "order": 2,
+      "grid_col": 21,
+      "grid_row": 18
+    },
+    {
+      "id": "star-1",
+      "slug": "kyua-test",
+      "title": "Kyua Testing in a FreeBSD UFS Jail",
+      "description": "Setting up a UFS jail for Kyua tests.",
+      "category": "jails",
+      "order": 1,
+      "grid_col": 4,
+      "grid_row": 3
+    },
+    {
+      "id": "star-2",
+      "slug": "jails-part-two",
+      "title": "Jails Part Two",
+      "description": "Second star in the jails constellation.",
+      "category": "jails",
+      "order": 2,
+      "grid_col": 2,
+      "grid_row": 2
+    },
+    {
+      "id": "star-3",
+      "slug": "jails-part-three",
+      "title": "Jails Part Three",
+      "description": "Third star in the jails constellation.",
+      "category": "jails",
+      "order": 3,
+      "grid_col": 6,
+      "grid_row": 2
+    },
+    {
+      "id": "star-6",
+      "slug": "storybook",
+      "title": "Storybook: A Two Part Tale",
+      "description": "A lone star: its category has no other posts, so no constellation lines.",
+      "category": "storybook",
+      "order": 1,
+      "grid_col": 19,
+      "grid_row": 3
+    }
+  ],
+  "regions": [
+    {
+      "category": "edge-cases",
+      "box_col": 0,
+      "box_row": 2,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "category": "gsoc",
+      "box_col": 2,
+      "box_row": 2,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "category": "jails",
+      "box_col": 0,
+      "box_row": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "category": "storybook",
+      "box_col": 2,
+      "box_row": 0,
+      "width": 1,
+      "height": 1
+    }
+  ],
+  "box_cols": 4,
+  "box_rows": 4,
+  "seed": 1,
+  "box_cells": 8,
+  "box_margin": 1,
+  "min_gap": 2,
+  "line_length": 3,
+  "line_variety": 0.5,
+  "line_clearance": 1,
+  "origin_col": 0,
+  "origin_row": 0
+}

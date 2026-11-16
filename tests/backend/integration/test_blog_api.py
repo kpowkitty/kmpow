@@ -11,12 +11,13 @@ def test_list_returns_every_post(api, seeded):
     assert {post['slug'] for post in res.json()} == {row['slug'] for row in read('blogs')}
 
 
-def test_list_is_ordered_by_category_then_order_then_slug(api, seeded):
+def test_list_is_ordered_by_category_then_constellation_order(api, seeded):
+    # Order within a category is the order posts joined it (seed file order), not alphabetical.
     res = api.get('/api/blogs/')
     assert [post['slug'] for post in res.json()] == [
-        'long-title-no-position',                      # edge-cases
-        'gsoc-follow-up', 'gsoc-writeup',              # gsoc: no order set, so by slug
-        'kyua-test', 'jails-part-two', 'jails-part-three',  # jails: by order, not alphabetical
+        'long-title-no-position',                           # edge-cases
+        'gsoc-writeup', 'gsoc-follow-up',                   # gsoc
+        'kyua-test', 'jails-part-two', 'jails-part-three',  # jails
         'storybook',
     ]
 

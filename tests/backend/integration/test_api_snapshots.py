@@ -7,7 +7,8 @@ from seed.snapshots import snapshot_path, snapshot_urls
 pytestmark = [pytest.mark.integration, pytest.mark.snapshot]
 
 
-@pytest.mark.django_db(reset_sequences=True)
+# serialized_rollback: transactional tests wipe the database, including rows migrations create (the Galaxy row).
+@pytest.mark.django_db(reset_sequences=True, serialized_rollback=True)
 @pytest.mark.parametrize('url', snapshot_urls())
 def test_api_matches_snapshot(api, seeded, request, url):
     res = api.get(url)
