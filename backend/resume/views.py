@@ -2,7 +2,8 @@ from rest_framework import viewsets, generics
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from collections import defaultdict
+from django.db.models import Prefetch
+from django.db.models.functions import Collate
 
 from .models import WorkExperience, Project, Education, TechCategory, TechTag
 from .serializers import (
@@ -33,11 +34,7 @@ class ConsolidatedTechList(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        category_map = defaultdict(set)
-        for category in TechCategory.objects.prefetch_related('tech_tags').all():
-            for tag in category.tech_tags.all():
-                category_map[category.name].add(tag.name)
-
-        data = [{"category": cat_name, "tags": sorted(list(tags))} for cat_name, tags in category_map.items()]
-        serializer = ConsolidatedTechSerializer(instance=data, many=True)
-        return Response(serializer.data)
+        alphabetical = Prefetch('tech_tags', queryset=TechTag.objects.order_by(Collate('name', 'C')))
+        categories = TechCategory.objects.filter(tech_tags__isnull=False).distinct().prefetch_related(alphabetical)
+        data = [{'category': c.name, 'tags': [t.name for t in c.tech_tags.all()]} for c in categories]
+        return Response(ConsolidatedTechSerializer(instance=data, many=True).data)

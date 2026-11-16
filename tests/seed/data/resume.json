@@ -44,7 +44,10 @@
       "tech_tags": [
         {"name": "Python", "category": "Language"},
         {"name": "Docker", "category": "Tool"},
-        {"name": "Docker", "category": "Backend"}
+        {"name": "Docker", "category": "Backend"},
+        {"name": "aws", "category": "Language"},
+        {"name": "C++", "category": "Language"},
+        {"name": ".NET", "category": "Language"}
       ]
     },
     {

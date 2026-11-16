@@ -111,7 +111,7 @@ tests/
 - **Galaxy:** `Stars.js` crashes on a blog with `position: null`.
 - **Prop mismatch:** `LoadingStars` passes `starCount`, but `TwinklyStars` expects `count`.
 - **`order` field (backend FIXED 2026-11-06):** `Blog.order` now exists and the API returns posts ordered by `category, order, slug` (`Meta.ordering`, migration `blog/0002_blog_order`). Remaining: `ConstellationLines` and `BlogAccessories` still sort by `order` client-side (the field isn't in the API). Remove those sorts and use the API's order via `constellations.js`/`neighbors()`. Rule: the backend owns ordering, and the frontend never re-sorts.
-- **Resume ties:** resume models order by `['order']` only, so items with the same `order` come back in no guaranteed order. Same root issue as blogs; add a unique tie-break field.
+- **Resume ties (FIXED 2026-11-16):** see the backend section.
 - **`ConstellationLines` logging:** it logs to the console on every render.
 - **Unordered API:** the About list API sorts by `-updated_at` only (ties unordered). The blog list is fixed (see `order` above).
 
@@ -212,14 +212,20 @@ tests/
   - `Region` admin is read-only and lists star counts.
   - `Galaxy` admin is read-only, with a "Change rules…" page that previews and then confirms. Its form is built from the model fields, so database limits show up as form errors.
   - `manage.py check_galaxy` (read-only) prints the galaxy and regions, and fails on any invariant violation.
-- NEXT: the backend part is functionally complete. Remaining: resume ordering ties (unique tie-break + migration + snapshots), then Part 4 (WebGL).
+- DONE **Resume ordering:**
+  - `ordering = ['order', 'id']` on TechCategory, WorkExperience, Project and Education; `['id']` on TechTag, so tags keep the order they were added. Migration `resume/0002_ordering_tie_break` changes no tables.
+  - The admin `ordering` overrides are removed, so the model is the only source.
+  - The tech-stack endpoint sorts in the query with `Collate('name', 'C')` (byte order, the same as the old Python `sorted()`, so the live order doesn't change). The Python sort, `set` and `defaultdict` are gone.
+  - A friendlier locale-aware tag order would be a visible change; leave it for the styling discussion.
+- **Test DB sorts like a real locale:** `postgres:16-alpine` (musl) sorts every locale in byte order, so compose sets `POSTGRES_INITDB_ARGS: --locale-provider=icu --icu-locale=en-US`. Text ordering in tests then matches a real prod locale. Checked: the byte-order test fails if the `"C"` pin is removed.
+- NEXT: the backend part is complete. Then Part 4 (WebGL).
 
 *Also:*
 - `Blog`: replace `position` JSON with `grid_col`/`grid_row` (unique together).
 - `GET /api/galaxy/` returns `{cols, rows, seed, stars: [...]}` without content; the list serializer drops `content`.
 - **Existing posts (decided):** `place_stars --reset` places every existing post fresh with the algorithm, in its current order; the percent positions are dropped. The starting size, 4×4 boxes (32×32 cells), comes from `0004_galaxy_initial`.
 - Update the seed data and snapshots to match.
-- **Resume ties:** add a unique tie-break to resume `Meta.ordering`, with a migration and snapshots.
+- DONE **Resume ties** (see above).
 
 **Cleanup / dedupe (logic only, styles identical):**
 - `src/theme/tokens.js` (verbatim colors) and `src/theme/animations.css` (twinkle/shimmer, defined once).

@@ -17,6 +17,18 @@
       {
         "id": 7,
         "name": "Docker"
+      },
+      {
+        "id": 8,
+        "name": "aws"
+      },
+      {
+        "id": 9,
+        "name": "C++"
+      },
+      {
+        "id": 10,
+        "name": ".NET"
       }
     ]
   },

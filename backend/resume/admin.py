@@ -8,7 +8,6 @@ class WorkExperienceAdmin(admin.ModelAdmin):
     list_editable = ('order',)
     search_fields = ('title', 'company', 'description')
     list_filter = ('company',)
-    ordering = ('order',)
     
     fieldsets = (
         ('Basic Information', {
@@ -32,7 +31,6 @@ class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'order')
     list_editable = ('order',)
     search_fields = ('name', 'description')
-    ordering = ('order',)
     
     fieldsets = (
         ('Basic Information', {
@@ -53,7 +51,6 @@ class EducationAdmin(admin.ModelAdmin):
     list_display = ('degree', 'school', 'graduation_date', 'order')
     list_editable = ('order',)
     search_fields = ('degree', 'school')
-    ordering = ('order',)
     
     fieldsets = (
         ('Basic Information', {

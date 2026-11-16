@@ -21,6 +21,8 @@ x-postgres: &postgres
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: postgres
     POSTGRES_DB: kmpow
+    # Alpine's libc sorts every locale in byte order; ICU sorts text like a real (prod) locale, on any OS.
+    POSTGRES_INITDB_ARGS: "--locale-provider=icu --icu-locale=en-US"
   healthcheck:
     test: ["CMD-SHELL", "pg_isready -U postgres -d kmpow"]
     interval: 2s

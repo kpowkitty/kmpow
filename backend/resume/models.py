@@ -5,7 +5,7 @@ class TechCategory(models.Model):
     order = models.IntegerField(default=0)
     
     class Meta:
-        ordering = ['order']
+        ordering = ['order', 'id']
         verbose_name_plural = "Tech Categories"
 
     def __str__(self):
@@ -23,6 +23,7 @@ class TechTag(models.Model):
     )
 
     class Meta:
+        ordering = ['id']
         unique_together = ('name', 'category')
 
     def __str__(self):
@@ -41,7 +42,7 @@ class WorkExperience(models.Model):
     tech_tags = models.ManyToManyField(TechTag, blank=True, related_name='work_entries')
 
     class Meta:
-        ordering = ['order']
+        ordering = ['order', 'id']
         verbose_name_plural = "Work Experiences"
 
     def __str__(self):
@@ -56,7 +57,7 @@ class Project(models.Model):
     tech_tags = models.ManyToManyField(TechTag, blank=True, related_name='project_entries')
 
     class Meta:
-        ordering = ['order']
+        ordering = ['order', 'id']
 
     def __str__(self):
         return self.name
@@ -72,7 +73,7 @@ class Education(models.Model):
     tech_tags = models.ManyToManyField(TechTag, blank=True, related_name='education_entries')
 
     class Meta:
-        ordering = ['order']
+        ordering = ['order', 'id']
         verbose_name_plural = "Education"
 
     def __str__(self):
